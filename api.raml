@@ -50,34 +50,35 @@ types:
             type: system.SystemStats
 
 
-/api/{version}/debug/:
-  is: [ secured ]
-  displayName: Debug API
-  description: Enables users to retrieve debug logs
-  get:
-    responses:
-      200:
-        body:
-          application/json:
-            type: object
-            properties:
-              objects: api.v1.debug.DebugResource[]
-              meta: Meta
-            example: |
-              {
-                "objects": [],
-                "meta": {
-                  "total_count": 0,
-                  "limit": 20,
-                  "offset": 0
+/api/{version}/debug:
+  /:
+    is: [ secured ]
+    displayName: Debug API
+    description: Enables users to retrieve debug logs
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                objects: api.v1.debug.DebugResource[]
+                meta: Meta
+              example: |
+                {
+                  "objects": [],
+                  "meta": {
+                    "total_count": 0,
+                    "limit": 20,
+                    "offset": 0
+                  }
                 }
-              }
-  post:
-    responses:
-      201:
-        body:
-          application/json:
-            type: api.v1.debug.DebugResource
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+              type: api.v1.debug.DebugResource
   /{pk}/:
     get:
       responses:
