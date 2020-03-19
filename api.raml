@@ -13,6 +13,7 @@ traits:
 types:
   Meta:
     type: object
+    displayName: Common Metadata
     properties:
       total_count: integer
       limit: integer
@@ -22,7 +23,9 @@ types:
 
 /systeminfo/:
   is: [ secured ]
+  displayName: System Information
   get:
+    displayName: Get System Information
     responses:
       200:
         body:
@@ -37,54 +40,57 @@ types:
 
 /systemstats/:
   is: [ secured ]
+  displayName: System Statistics
   get:
+    displayName: Get System Statistics
     responses:
       200:
         body:
           application/json:
             type: system.SystemStats
 
-/api/{version}/:
+
+/api/{version}/debug/:
   is: [ secured ]
-  /debug/:
+  displayName: Debug API
+  description: Enables users to retrieve debug logs
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              objects: api.v1.debug.DebugResource[]
+              meta: Meta
+            example: |
+              {
+                "objects": [],
+                "meta": {
+                  "total_count": 0,
+                  "limit": 20,
+                  "offset": 0
+                }
+              }
+  post:
+    responses:
+      201:
+        body:
+          application/json:
+            type: api.v1.debug.DebugResource
+  /{pk}/:
     get:
       responses:
         200:
           body:
-            type:
-              type: object
-              properties:
-                objects: api.v1.debug.DebugResource[]
-                meta: Meta
             application/json:
-              example: |
-                {
-                  "objects": [],
-                  "meta": {
-                    "total_count": 0,
-                    "limit": 20,
-                    "offset": 0
-                  }
-                }
-    post:
+              type: api.v1.debug.DebugResource
+    delete:
       responses:
-        201:
+        204:
+    put:
+      responses:
+        202:
           body:
             application/json:
               type: api.v1.debug.DebugResource
-    /{pk}/:
-      get:
-        responses:
-          200:
-            body:
-              application/json:
-                type: api.v1.debug.DebugResource
-      delete:
-        responses:
-          204:
-      put:
-        responses:
-          202:
-            body:
-              application/json:
-                type: api.v1.debug.DebugResource
