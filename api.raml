@@ -1,13 +1,26 @@
 #%RAML 1.0
 title: MUJIN Controller API
 version: v1
-baseUri: http://controller
+baseUri: http://{controller}
+baseUriParameters:
+  controller: string
 
 traits:
-  secured:
+  basicAuth:
     headers:
       Authorization:
+        type: string
         example: Basic bXVqaW46bXVqaW4=
+        required: true
+  csrfToken:
+    headers:
+      X-CSRFToken:
+        type: string
+        example: token
+        required: true
+      Cookie:
+        type: string
+        example: csrftoken=token
         required: true
 
 types:
@@ -32,7 +45,7 @@ types:
       size: integer
 
 /systeminfo/:
-  is: [secured]
+  is: [basicAuth]
   get:
     responses:
       200:
@@ -51,7 +64,7 @@ types:
               }
 
 /systemstats/:
-  is: [secured]
+  is: [basicAuth]
   get:
     responses:
       200:
@@ -65,7 +78,7 @@ types:
               cpu: object
 
 /interfaces/:
-  is: [secured]
+  is: [basicAuth]
   get:
     responses:
       200:
@@ -73,97 +86,109 @@ types:
           application/json:
 
 /upgrade/:
-  is: [secured]
+  is: [basicAuth]
   get:
     responses:
       200:
   post:
+    is: [csrfToken]
     responses:
       200:
   delete:
+    is: [csrfToken]
     responses:
       200:
 
 /reboot/:
-  is: [secured]
+  is: [basicAuth]
   post:
+    is: [csrfToken]
     responses:
       200:
 
 /halt/:
-  is: [secured]
+  is: [basicAuth]
   post:
+    is: [csrfToken]
     responses:
       200:
 
 /restartserver/:
-  is: [secured]
+  is: [basicAuth]
   post:
+    is: [csrfToken]
     responses:
       200:
 
 /log/ordercycle/:
-  is: [secured]
+  is: [basicAuth]
   get:
 
 /log/plcsignal/:
-  is: [secured]
+  is: [basicAuth]
   get:
 
 /log/plcsignalanalysis/:
-  is: [secured]
+  is: [basicAuth]
   get:
 
 /log/user/{category}/:
-  is: [secured]
+  is: [basicAuth]
   get:
 
 /config/:
-  is: [secured]
+  is: [basicAuth]
   get:
   put:
+    is: [csrfToken]
 
 /signalmap:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
   /{pk}/:
     get:
     put:
+      is: [csrfToken]
     delete:
+      is: [csrfToken]
 
 /backup/:
-  is: [secured]
+  is: [basicAuth]
   get:
   post:
+    is: [csrfToken]
 
 /query/barcodes/:
-  is: [secured]
+  is: [basicAuth]
   get:
 
 /referenceobjectpks/:
-  is: [secured]
+  is: [basicAuth]
   post:
+    is: [csrfToken]
 
 /file/upload/:
-  is: [secured]
+  is: [basicAuth]
   post:
+    is: [csrfToken]
 
 /file/delete/:
-  is: [secured]
+  is: [basicAuth]
   post:
+    is: [csrfToken]
 
 /file/list/:
-  is: [secured]
+  is: [basicAuth]
   get:
 
 /file/download/:
-  is: [secured]
+  is: [basicAuth]
   get:
   head:
 
 /api/v1/:
-  is: [secured]
+  is: [basicAuth]
   get:
     responses:
       200:
@@ -171,7 +196,7 @@ types:
           application/json:
 
 /api/v1/debug:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -200,7 +225,7 @@ types:
               type: DebugResource
 
 /api/v1/profile/:
-  is: [secured]
+  is: [basicAuth]
   get:
     responses:
       200:
@@ -208,7 +233,7 @@ types:
           application/json:
 
 /api/v1/ui/:
-  is: [secured]
+  is: [basicAuth]
   get:
     responses:
       200:
@@ -216,13 +241,14 @@ types:
           application/json:
 
   post:
+    is: [csrfToken]
     responses:
       200:
         body:
           application/json:
 
 /api/v1/task:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -230,6 +256,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -241,16 +268,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/job:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -258,6 +287,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -269,16 +299,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/planningresult:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -286,6 +318,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -297,16 +330,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/binpickingresult:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -314,6 +349,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -325,16 +361,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/controllerState:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -342,6 +380,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -353,16 +392,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/cycleLog:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -370,6 +411,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -381,16 +423,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/itl:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -398,6 +442,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -409,16 +454,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/scene:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -426,6 +473,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -437,16 +485,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/scene/{scenepk}/instobject:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -454,6 +504,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -465,16 +516,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -482,6 +535,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -493,16 +547,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/object:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -510,6 +566,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -518,10 +575,12 @@ types:
     /:
       get:
       put:
+        is: [csrfToken]
       delete:
+        is: [csrfToken]
 
 /api/v1/object/{objectpk}/link:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -529,6 +588,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -540,16 +600,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/object/{objectpk}/attachment:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -557,6 +619,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -568,16 +631,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/object/{objectpk}/geometry:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -585,6 +650,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -596,16 +662,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/object/{objectpk}/ikparam:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -613,6 +681,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -624,16 +693,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/object/{objectpk}/graspset:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -641,6 +712,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -652,16 +724,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/robot:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -669,6 +743,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -680,16 +755,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/robot/{robotpk}/tool:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -697,6 +774,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -708,16 +786,18 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:
 
 /api/v1/robot/{robotpk}/attachedsensor:
-  is: [secured]
+  is: [basicAuth]
   /:
     get:
       responses:
@@ -725,6 +805,7 @@ types:
           body:
             application/json:
     post:
+      is: [csrfToken]
       responses:
         201:
           body:
@@ -736,10 +817,12 @@ types:
           body:
             application/json:
     put:
+      is: [csrfToken]
       responses:
         202:
           body:
             application/json:
     delete:
+      is: [csrfToken]
       responses:
         204:

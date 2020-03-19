@@ -1,12 +1,38 @@
 #%RAML 1.0 Overlay
 masterRef: api.raml
 title: MUJIN Controller API
+description: |
+  This document describes the HTTP API to interact with a MUJIN controller.
+
+baseUriParameters:
+  controller:
+    description: Hostname or IP address of MUJIN controller
+
+documentation:
+  - title: URL
+    content: |
+      This API is based on HTTP protocol and can be accessed at port `80` on the controller. The URL for API access is any one of the following:
+
+      - `http://controller123/api/v1/` where `controller123` is the controller name, this method will not work if DNS is not set up properly to resolve hostnames on the network
+      - `http://192.168.0.1/api/v1/` where `192.168.0.1` is the IP address of the controller, this can be determined through the user interface of the controller
+
+      You can try these method in a web browser, the web browser will prompt for username and password before allowing access. See the next section for details on how to authenticate when using this API.
+  - title: Authentication
+    content: |
+      To use this API, client side software need to use **Basic authentication** to authenticate with HTTP server on the controller. This can be done by supplying the following HTTP header to the request:
+
+      ```
+      Authorization: Basic bXVqaW46bXVqaW4=
+      ```
+
+      Where `bXVqaW46bXVqaW4=` is a base64 string, encoding the username and password separated by a `:`, in this case `mujin:mujin`
 
 traits:
-  secured:
+  basicAuth:
+    description: Authorization credentials encoded with base64
     headers:
       Authorization:
-        description: Authorization credentials
+        displayName: Authorization credentials encoded with base64
 
 types:
   Meta:
