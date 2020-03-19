@@ -1,0 +1,21 @@
+#%RAML 1.0 Overlay
+masterRef: api.raml
+title: MUJIN コントローラ API
+
+types:
+  Meta:
+    displayName: 共用メタデータ
+
+/systeminfo/:
+  displayName: システムインフォメーション
+  get:
+    displayName: システム情報を取得
+
+/systemstats/:
+  displayName: システム統計
+  get:
+    displayName: システム統計を取得
+
+/api/{version}/debug:
+  displayName: デバッグ
+  description: デバッグログを取得

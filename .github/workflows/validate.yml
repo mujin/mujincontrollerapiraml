@@ -15,5 +15,4 @@ jobs:
       with:
         node-version: 12.x
     - run: npm install -g raml2html@7.5.0
-    - run: raml2html --input api.raml --validate
-
+    - run: raml2html --input api.raml --output /dev/null --validate

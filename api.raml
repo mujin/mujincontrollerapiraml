@@ -13,7 +13,6 @@ traits:
 types:
   Meta:
     type: object
-    displayName: Common Metadata
     properties:
       total_count: integer
       limit: integer
@@ -23,9 +22,7 @@ types:
 
 /systeminfo/:
   is: [ secured ]
-  displayName: System Information
   get:
-    displayName: Get System Information
     responses:
       200:
         body:
@@ -40,9 +37,7 @@ types:
 
 /systemstats/:
   is: [ secured ]
-  displayName: System Statistics
   get:
-    displayName: Get System Statistics
     responses:
       200:
         body:
@@ -53,8 +48,6 @@ types:
 /api/{version}/debug:
   /:
     is: [ secured ]
-    displayName: Debug API
-    description: Enables users to retrieve debug logs
     get:
       responses:
         200:

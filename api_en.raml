@@ -1,0 +1,21 @@
+#%RAML 1.0 Overlay
+masterRef: api.raml
+title: MUJIN Controller API
+
+types:
+  Meta:
+    displayName: Common Metadata
+
+/systeminfo/:
+  displayName: System Information
+  get:
+    displayName: Get System Information
+
+/systemstats/:
+  displayName: System Statistics
+  get:
+    displayName: Get System Statistics
+
+/api/{version}/debug:
+  displayName: Debug Data
+  description: Enables users to retrieve debug logs

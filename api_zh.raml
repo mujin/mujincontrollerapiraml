@@ -1,0 +1,28 @@
+#%RAML 1.0 Overlay
+masterRef: api.raml
+title: MUJIN 控制器 APIs
+
+types:
+  Meta:
+    displayName: 共用元数据
+
+/systeminfo/:
+  displayName: 系统信息
+  get:
+    displayName: 获取系统信息
+
+/systemstats/:
+  displayName: 系统统计信息
+  get:
+    displayName: 获取系统统计信息
+
+/api/{version}/debug:
+  displayName: 调试数据
+  /:
+    description: 获取调试日志
+    get:
+      description: 获取调试日志
+  /{pk}/:
+    description: 获取调试日志
+    get:
+      description: 获取调试日志
