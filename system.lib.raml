@@ -1,0 +1,16 @@
+#%RAML 1.0 Library
+
+types:
+  SystemInfo:
+    type: object
+    properties:
+      hardware: string
+      product: string
+      id: string
+  SystemStats:
+    type: object
+    properties:
+      memory: object
+      disk: object
+      temperature: array
+      cpu: object

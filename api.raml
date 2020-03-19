@@ -1,0 +1,90 @@
+#%RAML 1.0
+title: MUJIN Controller API
+version: v1
+baseUri: http://controller
+
+uses:
+  system: system.lib.raml
+  api.v1.debug: api/v1/debug.lib.raml
+
+traits:
+  secured: !include traits/secured.raml
+
+types:
+  Meta:
+    type: object
+    properties:
+      total_count: integer
+      limit: integer
+      offset: integer
+      previous?: string
+      next?: string
+
+/systeminfo/:
+  is: [ secured ]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: system.SystemInfo
+            example: |
+              {
+                "hardware": "HARDWARE-MODEL",
+                "product": "PRODUCT-ID",
+                "id": "controller"
+              }
+
+/systemstats/:
+  is: [ secured ]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: system.SystemStats
+
+/api/{version}/:
+  is: [ secured ]
+  /debug/:
+    get:
+      responses:
+        200:
+          body:
+            type:
+              type: object
+              properties:
+                objects: api.v1.debug.DebugResource[]
+                meta: Meta
+            application/json:
+              example: |
+                {
+                  "objects": [],
+                  "meta": {
+                    "total_count": 0,
+                    "limit": 20,
+                    "offset": 0
+                  }
+                }
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+              type: api.v1.debug.DebugResource
+    /{pk}/:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: api.v1.debug.DebugResource
+      delete:
+        responses:
+          204:
+      put:
+        responses:
+          202:
+            body:
+              application/json:
+                type: api.v1.debug.DebugResource
