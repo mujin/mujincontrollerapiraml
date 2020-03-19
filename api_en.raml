@@ -36,16 +36,98 @@ traits:
 
 types:
   Meta:
-    displayName: Common Metadata
+    properties:
+      total_count:
+        description: Total number of entries
+      limit:
+        description: Maximum number of entries to retrieve, used for pagination
+      offset:
+        description: Offset into the list of entries, used for pagination
+      previous:
+        description: Relative URI to fetch the previous page
+      next:
+        description: Relative URI to fetch the next page
   DebugResource:
-    displayName: Debug Resource
+    properties:
+      pk:
+        description: Primary key of debug resource
+      resource_uri:
+        description: Relative URI of debug resource
+      description:
+        description: Description of debug resource
+      name:
+        description: Name of debug resource, same as `pk`
+      downloadUri:
+        description: Relative URI to download debug resource
+      datemodified:
+        description: Timestamp of last modification
+      size:
+        description: Size of the debug resource, hint for downloading
 
 /systeminfo/:
-  displayName: System Information
-  get:
-    displayName: Get System Information
+  displayName: System information
 
 /systemstats/:
-  displayName: System Statistics
-  get:
-    displayName: Get System Statistics
+  displayName: System statistics
+
+/interfaces/:
+  displayName: Network interfaces
+
+/upgrade/:
+  displayName: Upgrade controller
+
+/reboot/:
+  displayName: Reboot controller
+
+/halt/:
+  displayName: Shutdown controller
+
+/restartserver/:
+  displayName: Restart planning server
+
+/log/ordercycle/:
+  displayName: Retrieve order cycle log (DEPRECATED)
+
+/log/plcsignal/:
+  displayName: Retrieve PLC signal log
+
+/log/plcsignalanalysis/:
+  displayName: Analayze PLC signal timing
+
+/log/user/{category}/:
+  displayName: Retrieve user logs
+
+/config/:
+  displayName: Configuration files
+
+/signalmap:
+  displayName: PLC signal maps
+
+/backup/:
+  displayName: Backup and restore
+
+/query/barcodes/:
+  displayName: Query scene based on barcode
+
+/referenceobjectpks/:
+  displayName: Manage referenced objects
+
+/file:
+  displayName: File management
+  /upload/:
+    post:
+      displayName: Upload a file to controller
+  /delete/:
+    post:
+      displayName: Delete a file on controller
+  /list/:
+    get:
+      displayName: List files on controller
+  /download/:
+    get:
+      displayName: Download a file from controller
+    head:
+      displayName: Peek at file metadata without downloading content
+
+/api/v1/debug:
+  displayName: Debug logs

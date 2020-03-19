@@ -30,8 +30,8 @@ types:
       total_count: integer
       limit: integer
       offset: integer
-      previous?: string
-      next?: string
+      previous: string | nil
+      next: string | nil
   DebugResource:
     type: object
     properties:
@@ -41,7 +41,6 @@ types:
       name: string
       downloadUri: string
       datemodified: string
-      unit: string
       size: integer
 
 /systeminfo/:
@@ -168,24 +167,75 @@ types:
   post:
     is: [csrfToken]
 
-/file/upload/:
-  is: [basicAuth]
-  post:
-    is: [csrfToken]
-
-/file/delete/:
-  is: [basicAuth]
-  post:
-    is: [csrfToken]
-
-/file/list/:
-  is: [basicAuth]
-  get:
-
-/file/download/:
-  is: [basicAuth]
-  get:
-  head:
+/file:
+  /upload/:
+    is: [basicAuth]
+    post:
+      is: [csrfToken]
+      queryParameters:
+        filename?: string
+      body:
+        multipart/form-data:
+          properties:
+            filename?: string
+            file:
+              required: true
+              type: file
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                filename: string
+                modified: number
+                size: integer
+  /delete/:
+    is: [basicAuth]
+    post:
+      is: [csrfToken]
+      queryParameters:
+        filename: string
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                filename: string
+  /list/:
+    is: [basicAuth]
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                filename?:
+                  type: object
+                  properties:
+                    modified: number
+                    size: integer
+              example: |
+                {
+                  "filename1.mujin.dae": {
+                    "modified": 1565932929.9884703,
+                    "size": 9938
+                  }
+                }
+  /download/:
+    is: [basicAuth]
+    get:
+      queryParameters:
+        filename: string
+      responses:
+        302:
+    head:
+      queryParameters:
+        filename: string
+      responses:
+        302:
 
 /api/v1/:
   is: [basicAuth]
@@ -209,11 +259,23 @@ types:
                 meta: Meta
               example: |
                 {
-                  "objects": [],
+                  "objects": [
+                    {
+                      "description": "System logs",
+                      "name": "system-logs",
+                      "downloadUri": "/api/v1/debug/system-logs/download/",
+                      "pk": "system-logs",
+                      "resource_uri": "/api/v1/debug/system-logs/",
+                      "datemodified": "2020-03-19T15:07:42.633247+09:00",
+                      "size": 125289232
+                    }
+                  ],
                   "meta": {
-                    "total_count": 0,
+                    "total_count": 1,
+                    "previous": null,
                     "limit": 20,
-                    "offset": 0
+                    "offset": 0,
+                    "next": null
                   }
                 }
   /{pk}/:
@@ -223,6 +285,16 @@ types:
           body:
             application/json:
               type: DebugResource
+              example:
+                {
+                  "description": "System logs",
+                  "name": "system-logs",
+                  "downloadUri": "/api/v1/debug/system-logs/download/",
+                  "pk": "system-logs",
+                  "resource_uri": "/api/v1/debug/system-logs/",
+                  "datemodified": "2020-03-19T15:07:42.633247+09:00",
+                  "size": 125289232
+                }
 
 /api/v1/profile/:
   is: [basicAuth]
