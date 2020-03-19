@@ -3,12 +3,13 @@
 ## Prerequisites
 
 ```bash
-npm install -g raml2html raml2html-slate-theme
+npm install -g raml2html
 ```
 
 ## Build
 
 ```bash
-raml2html --theme raml2html-slate-theme --input api.raml --output api.html --validate
+mkdir -p ./build
+raml2html --input api.raml --output ./build/index.html --validate
 ```
 
