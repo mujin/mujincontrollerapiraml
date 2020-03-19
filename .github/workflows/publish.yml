@@ -12,11 +12,11 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - run: npm install -g raml2html@7.5.0
+    - run: npm install -g raml2html@7.5.0 raml2html-plain-theme@0.1.6
     - run: mkdir -p ./build/ja ./build/zh ./build/en
-    - run: raml2html --input api.raml --output ./build/en/index.html --extensionsAndOverlays api_en.raml
-    - run: raml2html --input api.raml --output ./build/ja/index.html --extensionsAndOverlays api_ja.raml
-    - run: raml2html --input api.raml --output ./build/zh/index.html --extensionsAndOverlays api_zh.raml
+    - run: raml2html --input api.raml --output ./build/en/index.html --extensionsAndOverlays api_en.raml --theme raml2html-plain-theme
+    - run: raml2html --input api.raml --output ./build/ja/index.html --extensionsAndOverlays api_ja.raml --theme raml2html-plain-theme
+    - run: raml2html --input api.raml --output ./build/zh/index.html --extensionsAndOverlays api_zh.raml --theme raml2html-plain-theme
     - run: ln -s en/index.html ./build/index.html
     - uses: peaceiris/actions-gh-pages@v3
       with:

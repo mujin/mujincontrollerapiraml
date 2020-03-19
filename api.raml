@@ -3,12 +3,12 @@ title: MUJIN Controller API
 version: v1
 baseUri: http://controller
 
-uses:
-  system: system.lib.raml
-  api.v1.debug: api/v1/debug.lib.raml
-
 traits:
-  secured: !include traits/secured.raml
+  secured:
+    headers:
+      Authorization:
+        example: Basic bXVqaW46bXVqaW4=
+        required: true
 
 types:
   Meta:
@@ -19,15 +19,40 @@ types:
       offset: integer
       previous?: string
       next?: string
+  SystemInfo:
+    type: object
+    properties:
+      hardware: string
+      product: string
+      id: string
+  SystemStats:
+    type: object
+    properties:
+      memory: object
+      disk: object
+      temperature: array
+      cpu: object
+  DebugResource:
+    type: object
+    properties:
+      pk: string
+      resource_uri: string
+      description: string
+      name: string
+      downloadUri: string
+      datemodified: string
+      unit: string
+      size: integer
+
 
 /systeminfo/:
-  is: [ secured ]
+  is: [secured]
   get:
     responses:
       200:
         body:
           application/json:
-            type: system.SystemInfo
+            type: SystemInfo
             example: |
               {
                 "hardware": "HARDWARE-MODEL",
@@ -36,18 +61,18 @@ types:
               }
 
 /systemstats/:
-  is: [ secured ]
+  is: [secured]
   get:
     responses:
       200:
         body:
           application/json:
-            type: system.SystemStats
+            type: SystemStats
 
 
 /api/{version}/debug:
+  is: [secured]
   /:
-    is: [ secured ]
     get:
       responses:
         200:
@@ -55,7 +80,7 @@ types:
             application/json:
               type: object
               properties:
-                objects: api.v1.debug.DebugResource[]
+                objects: DebugResource[]
                 meta: Meta
               example: |
                 {
@@ -71,14 +96,14 @@ types:
         201:
           body:
             application/json:
-              type: api.v1.debug.DebugResource
+              type: DebugResource
   /{pk}/:
     get:
       responses:
         200:
           body:
             application/json:
-              type: api.v1.debug.DebugResource
+              type: DebugResource
     delete:
       responses:
         204:
@@ -87,4 +112,4 @@ types:
         202:
           body:
             application/json:
-              type: api.v1.debug.DebugResource
+              type: DebugResource

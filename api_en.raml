@@ -2,9 +2,21 @@
 masterRef: api.raml
 title: MUJIN Controller
 
+traits:
+  secured:
+    headers:
+      Authorization:
+        description: Authorization credentials
+
 types:
   Meta:
     displayName: Common Metadata
+  SystemInfo:
+    displayName: System Information
+  SystemStats:
+    displayName: System Statistics
+  DebugResource:
+    displayName: Debug Resource
 
 /systeminfo/:
   displayName: System Information
