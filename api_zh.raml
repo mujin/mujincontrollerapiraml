@@ -1,6 +1,6 @@
 #%RAML 1.0 Overlay
 masterRef: api.raml
-title: MUJIN 控制器
+title: MUJIN 控制器 API
 
 types:
   Meta:
@@ -16,7 +16,7 @@ types:
   get:
     displayName: 获取系统统计信息
 
-/api/{version}/debug:
+/api/v1/debug:
   displayName: 调试数据
   /:
     description: 获取调试日志

@@ -19,19 +19,6 @@ types:
       offset: integer
       previous?: string
       next?: string
-  SystemInfo:
-    type: object
-    properties:
-      hardware: string
-      product: string
-      id: string
-  SystemStats:
-    type: object
-    properties:
-      memory: object
-      disk: object
-      temperature: array
-      cpu: object
   DebugResource:
     type: object
     properties:
@@ -44,7 +31,6 @@ types:
       unit: string
       size: integer
 
-
 /systeminfo/:
   is: [secured]
   get:
@@ -52,7 +38,11 @@ types:
       200:
         body:
           application/json:
-            type: SystemInfo
+            type: object
+            properties:
+              hardware: string
+              product: string
+              id: string
             example: |
               {
                 "hardware": "HARDWARE-MODEL",
@@ -67,10 +57,120 @@ types:
       200:
         body:
           application/json:
-            type: SystemStats
+            type: object
+            properties:
+              memory: object
+              disk: object
+              temperature: object[]
+              cpu: object
+
+/interfaces/:
+  is: [secured]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+
+/upgrade/:
+  is: [secured]
+  get:
+    responses:
+      200:
+  post:
+    responses:
+      200:
+  delete:
+    responses:
+      200:
+
+/reboot/:
+  is: [secured]
+  post:
+    responses:
+      200:
+
+/halt/:
+  is: [secured]
+  post:
+    responses:
+      200:
+
+/restartserver/:
+  is: [secured]
+  post:
+    responses:
+      200:
+
+/log/ordercycle/:
+  is: [secured]
+  get:
+
+/log/plcsignal/:
+  is: [secured]
+  get:
+
+/log/plcsignalanalysis/:
+  is: [secured]
+  get:
+
+/log/user/{category}/:
+  is: [secured]
+  get:
+
+/config/:
+  is: [secured]
+  get:
+  put:
+
+/signalmap:
+  /:
+    get:
+  /{pk}/:
+    get:
+    put:
+    delete:
+
+/backup/:
+  is: [secured]
+  get:
+  post:
+
+/query/barcodes/:
+  is: [secured]
+  get:
+
+/referenceobjectpks/:
+  is: [secured]
+  post:
+
+/file/upload/:
+  is: [secured]
+  post:
+
+/file/delete/:
+  is: [secured]
+  post:
+
+/file/list/:
+  is: [secured]
+  get:
+
+/file/download/:
+  is: [secured]
+  get:
+  head:
+
+/api/v1/:
+  is: [secured]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
 
 
-/api/{version}/debug:
+/api/v1/debug:
   is: [secured]
   /:
     get:
@@ -91,12 +191,6 @@ types:
                     "offset": 0
                   }
                 }
-    post:
-      responses:
-        201:
-          body:
-            application/json:
-              type: DebugResource
   /{pk}/:
     get:
       responses:
@@ -104,12 +198,549 @@ types:
           body:
             application/json:
               type: DebugResource
-    delete:
+
+/api/v1/profile/:
+  is: [secured]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+
+/api/v1/ui/:
+  is: [secured]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+
+  post:
+    responses:
+      200:
+        body:
+          application/json:
+
+
+/api/v1/task:
+  is: [secured]
+  /:
+    get:
       responses:
-        204:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{pk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
     put:
       responses:
         202:
           body:
             application/json:
-              type: DebugResource
+    delete:
+      responses:
+        204:
+
+/api/v1/job:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{pk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/planningresult:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{pk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/binpickingresult:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{pk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/controllerState:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{pk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/cycleLog:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{pk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/itl:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{pk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/scene:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{scenepk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/scene/{scenepk}/instobject:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{instobjectpk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{toolpk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/object:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{objectpk}:
+    /:
+      get:
+      put:
+      delete:
+
+/api/v1/object/{objectpk}/link:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{linkpk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/object/{objectpk}/attachment:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{attachmentpk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/object/{objectpk}/geometry:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{geometrypk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/object/{objectpk}/ikparam:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{ikparampk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/object/{objectpk}/graspset:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{graspsetpk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/robot:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{robotpk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/robot/{robotpk}/tool:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{toolpk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
+
+/api/v1/robot/{robotpk}/attachedsensor:
+  is: [secured]
+  /:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      responses:
+        201:
+          body:
+            application/json:
+  /{attachedsensorpk}/:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      responses:
+        202:
+          body:
+            application/json:
+    delete:
+      responses:
+        204:
