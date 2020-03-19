@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [12.x]
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install raml2html raml2html-slate-theme
+    - run: npm install -g raml2html@7.5.0 raml2html-slate-theme@2.6.0
     - run: mkdir ./build
     - run: raml2html --theme raml2html-slate-theme --input api.raml --output ./build/index.html --validate
     - name: Deploy GitHub page
@@ -26,3 +26,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
+
