@@ -124,6 +124,7 @@ types:
   put:
 
 /signalmap:
+  is: [secured]
   /:
     get:
   /{pk}/:
@@ -168,7 +169,6 @@ types:
       200:
         body:
           application/json:
-
 
 /api/v1/debug:
   is: [secured]
@@ -220,7 +220,6 @@ types:
       200:
         body:
           application/json:
-
 
 /api/v1/task:
   is: [secured]
