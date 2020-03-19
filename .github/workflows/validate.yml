@@ -1,0 +1,19 @@
+name: validate
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - run: npm install -g raml2html@7.5.0 raml2html-slate-theme@2.6.0
+    - run: raml2html --theme raml2html-slate-theme --input api.raml --validate
+
