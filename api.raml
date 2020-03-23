@@ -5,6 +5,56 @@ baseUri: http://{controller}
 baseUriParameters:
   controller: string
 
+resourceTypes:
+  collection:
+    description: Collection of available <<resourcePathName>>
+    get:
+      description: Get a list of <<resourcePathName>>
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                <<exampleCollection>>
+    post:
+      description: Create a new <<resourcePathName|!singularize>> and add to <<resourcePathName>> list
+      responses:
+        201:
+          body:
+            application/json:
+              exmample: |
+                <<exampleItem>>
+  collection-item:
+    description: <<resourcePathName|!singularize>> resource
+    get:
+      description: |
+        GET the <<resourcePathName|!singularize>>
+        with <<resourcePathName|!singularize>>pk =
+        {<<resourcePathName|!singularize>>pk}
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              <<exampleItem>>
+      404:
+        body:
+          application/json
+    put:
+      description: |
+        PUT (modify) the <<resourcePathName|!singularize>>
+        with <<resourcePathName|!singularize>>pk =
+        {<<resourcePathName|!singularize>>pk}
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              <<exampleItem>>
+      404:
+        body:
+          application/json
+
 traits:
   basicAuth:
     headers:
