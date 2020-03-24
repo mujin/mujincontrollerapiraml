@@ -6,6 +6,24 @@ baseUriParameters:
   controller: string
 version: v1
 
+traits:
+  basicAuth:
+    headers:
+      Authorization:
+        type: string
+        example: Basic bXVqaW46bXVqaW4=
+        required: true
+  csrfToken:
+    headers:
+      X-CSRFToken:
+        type: string
+        example: token
+        required: true
+      Cookie:
+        type: string
+        example: csrftoken=token
+        required: true
+
 types:
   Meta:
     type: object
@@ -25,20 +43,22 @@ types:
       downloadUri: string
       datemodified: string
       size: integer
+  CollectionResource: !include schemas/collection.schema
   SceneResource: !include schemas/scene.schema
   ObjectResource: !include schemas/object.schema
-  RobotResource: !include schemas/robot.schema
   LinkResource: !include schemas/link.schema
   AttachmentResource: !include schemas/attachment.schema
   GeometryResource: !include schemas/geometry.schema
-  AttachedSensorResource: !include schemas/attachedsensor.schema
   IkParamResource: !include schemas/ikparam.schema
   GraspsetResource: !include schemas/graspset.schema
+  RobotResource: !include schemas/robot.schema
+  ToolResource: !include schemas/tool.schema
+  AttachedSensorResource: !include schemas/attachedsensor.schema
   InstObjectResource: !include schemas/instobject.schema
   InstObjectToolResource: !include schemas/instobjecttool.schema
 
 resourceTypes:
-  webapi-openraveenv-collection:
+  CollectionResource:
     description: Collection of available <<resourcePathName>> in the OpenRave environment
     is: [basicAuth]
     get:
@@ -47,8 +67,8 @@ resourceTypes:
         200:
           body:
             application/json:
-              type: <<collectionSchema>>
-              example: <<exampleCollection>>
+              type: CollectionResource
+              example: !include examples/collection.sample
     post:
       description: |
         Create a new <<resourcePathName|!singularize>> and add to <<resourcePathName>> list.
@@ -58,56 +78,62 @@ resourceTypes:
         201:
           body:
             application/json:
-              type: <<collectionSchema>>
-              example: <<exampleCollection>>
-  webapi-openraveenv-collection-item:
-    description: <<collection-item-description>>
+              type: CollectionResource
+              example: !include examples/collection.sample
+  CollectionItemResource:
+    description: <<resourceDescription>>
     is: [basicAuth]
     get:
       description: |
-        Get specific <<resourcePathName|!singularize>> resource with <<resourcePathName|!singularize>>pk.
+        Get specific resource <<resourcePathName|!singularize>> with <<resourcePathName|!singularize>>pk.
         Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
       responses:
         200:
           body:
             application/json:
-              type: <<collectionItemSchema>>
-              example: <<exampleCollectionItem>>
-        404:
-          body:
-            application/json
+              type: <<resourceSchema>>
+              example: <<resourceSchemaExample>>
     put:
       description: |
-        Modify specific <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
+        Modify specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
         Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modifications.
       is: [csrfToken]
+      responses:
+        202:
+          body:
+            application/json:
+              type: <<resourceSchema>>
+              example: <<resourceSchemaExample>>
+    delete:
+      description: |
+        Delete specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
+      is: [csrfToken]
+      responses:
+        204:
+  ReadModifyOnlyItemResource:
+    description: <<resourceDescription>>
+    is: [basicAuth]
+    get:
+      description: |
+        Get specific resource <<resourcePathName|!singularize>> with <<resourcePathName|!singularize>>pk.
+        Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
       responses:
         200:
           body:
             application/json:
-              type: <<collectionItemSchema>>
-              example: <<exampleCollectionItem>>
-        404:
+              type: <<resourceSchema>>
+              example: <<resourceSchemaExample>>
+    put:
+      description: |
+        Modify specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
+        Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modifications.
+      is: [csrfToken]
+      responses:
+        202:
           body:
-            application/json
-
-traits:
-  basicAuth:
-    headers:
-      Authorization:
-        type: string
-        example: Basic bXVqaW46bXVqaW4=
-        required: true
-  csrfToken:
-    headers:
-      X-CSRFToken:
-        type: string
-        example: token
-        required: true
-      Cookie:
-        type: string
-        example: csrftoken=token
-        required: true
+            application/json:
+              type: <<resourceSchema>>
+              example: <<resourceSchemaExample>>
 
 /systeminfo/:
   is: [basicAuth]
@@ -603,348 +629,127 @@ traits:
         204:
 
 /api/v1/scene:
-  is: [basicAuth]
   /:
     type:
-      webapi-openraveenv-collection:
-        getCollection: 
-        postCollection: 
-        exampleCollection:
+      CollectionResource:
   /{scenepk}/:
     type:
-      webapi-openraveenv-collection-item:
-        getCollectionItem:
-        putCollectionItem:
-        exampleCollectionItem:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: SceneResource
+        resourceSchemaExample: !include examples/scene.sample
 
 /api/v1/scene/{scenepk}/instobject:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
   /{instobjectpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: InstObjectResource
+        resourceSchemaExample: !include examples/instobject.sample
 
 /api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
   /{toolpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: InstObjectToolResource
+        resourceSchemaExample: !include examples/instobjecttool.sample
 
-/api/v1/object:
-  is: [basicAuth]
+/api/v1/object/{objectpk}:
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
-  /{objectpk}:
-    /:
-      get:
-      put:
-        is: [csrfToken]
-      delete:
-        is: [csrfToken]
+    type:
+      ReadModifyOnlyItemResource:
+        resourceDescription: TODO...
+        resourceSchema: ObjectResource
+        resourceSchemaExample: !include examples/object.sample
 
 /api/v1/object/{objectpk}/link:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+        CollectionResource:
   /{linkpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+  type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: LinkResource
+        resourceSchemaExample: !include examples/link.sample
 
 /api/v1/object/{objectpk}/attachment:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
   /{attachmentpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: AttachmentResource
+        resourceSchemaExample: !include examples/attachment.sample
 
 /api/v1/object/{objectpk}/geometry:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      Collection:
   /{geometrypk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
-
+    type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: GeometryResource
+        resourceSchemaExample: !include examples/geometry.sample
+    
 /api/v1/object/{objectpk}/ikparam:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      Collection:
   /{ikparampk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: IkParamResource
+        resourceSchemaExample: !include examples/ikparam.sample
 
 /api/v1/object/{objectpk}/graspset:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      Collection:
   /{graspsetpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
-
-/api/v1/robot:
-  is: [basicAuth]
+    type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: GraspSetResource
+        resourceSchemaExample: !include examples/graspset.sample
+    
+/api/v1/robot/{robotpk}/:
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
-  /{robotpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
-
+    type:
+      ReadModifyOnlyItemResource:
+        resourceDescription: TODO...
+        resourceSchema: RobotResource
+        resourceSchemaExample: !include examples/robot.sample
+    
 /api/v1/robot/{robotpk}/tool:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      Collection:
   /{toolpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: ToolResource
+        resourceSchemaExample: !include examples/tool.sample
 
 /api/v1/robot/{robotpk}/attachedsensor:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      Collection:
   /{attachedsensorpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      CollectionItemResource:
+        resourceDescription: TODO...
+        resourceSchema: AttachedSensorResource
+        resourceSchemaExample: !include examples/attachedsensor.sample
