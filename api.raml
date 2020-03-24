@@ -6,9 +6,6 @@ baseUriParameters:
   controller: string
 version: v1
 
-uses:
-  WebApiOpenRaveEnv: /libraries/webapi-openrave-env.lib.raml
-
 types:
   Meta:
     type: object
@@ -28,18 +25,29 @@ types:
       downloadUri: string
       datemodified: string
       size: integer
+  SceneResource: !include schemas/scene.schema
+  ObjectResource: !include schemas/object.schema
+  RobotResource: !include schemas/robot.schema
+  LinkResource: !include schemas/link.schema
+  AttachmentResource: !include schemas/attachment.schema
+  GeometryResource: !include schemas/geometry.schema
+  AttachedSensorResource: !include schemas/attachedsensor.schema
+  IkParamResource: !include schemas/ikparam.schema
+  GraspsetResource: !include schemas/graspset.schema
+  InstObjectResource: !include schemas/instobject.schema
+  InstObjectToolResource: !include schemas/instobjecttool.schema
 
 resourceTypes:
   webapi-openraveenv-collection:
     description: Collection of available <<resourcePathName>> in the OpenRave environment
+    is: [basicAuth]
     get:
       description: Get JSON representation of <<resourcePathName>> list.
-      is: [basicAuth]
       responses:
         200:
           body:
             application/json:
-              type: <<getCollection>>
+              type: <<collectionSchema>>
               example: <<exampleCollection>>
     post:
       description: |
@@ -50,21 +58,21 @@ resourceTypes:
         201:
           body:
             application/json:
-              type: <<postCollection>>
-              example: <<exampleItem>>
+              type: <<collectionSchema>>
+              example: <<exampleCollection>>
   webapi-openraveenv-collection-item:
     description: <<collection-item-description>>
+    is: [basicAuth]
     get:
       description: |
         Get specific <<resourcePathName|!singularize>> resource with <<resourcePathName|!singularize>>pk.
         Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
-      is: [csrfToken]
       responses:
         200:
           body:
             application/json:
-              type: <<getCollectionItem>>
-              example: <<exampleItem>>
+              type: <<collectionItemSchema>>
+              example: <<exampleCollectionItem>>
         404:
           body:
             application/json
@@ -77,8 +85,8 @@ resourceTypes:
         200:
           body:
             application/json:
-              type: <<putCollectionItem>>
-              example: <<exampleItem>>
+              type: <<collectionItemSchema>>
+              example: <<exampleCollectionItem>>
         404:
           body:
             application/json
@@ -597,33 +605,17 @@ traits:
 /api/v1/scene:
   is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      webapi-openraveenv-collection:
+        getCollection: 
+        postCollection: 
+        exampleCollection:
   /{scenepk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      webapi-openraveenv-collection-item:
+        getCollectionItem:
+        putCollectionItem:
+        exampleCollectionItem:
 
 /api/v1/scene/{scenepk}/instobject:
   is: [basicAuth]
