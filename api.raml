@@ -1,77 +1,13 @@
 #%RAML 1.0
+
 title: MUJIN Controller API
-version: v1
 baseUri: http://{controller}
 baseUriParameters:
   controller: string
+version: v1
 
-resourceTypes:
-  collection:
-    description: Collection of available <<resourcePathName>>
-    get:
-      description: Get a list of <<resourcePathName>>
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                <<exampleCollection>>
-    post:
-      description: Create a new <<resourcePathName|!singularize>> and add to <<resourcePathName>> list
-      responses:
-        201:
-          body:
-            application/json:
-              exmample: |
-                <<exampleItem>>
-  collection-item:
-    description: <<resourcePathName|!singularize>> resource
-    get:
-      description: |
-        GET the <<resourcePathName|!singularize>>
-        with <<resourcePathName|!singularize>>pk =
-        {<<resourcePathName|!singularize>>pk}
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              <<exampleItem>>
-      404:
-        body:
-          application/json
-    put:
-      description: |
-        PUT (modify) the <<resourcePathName|!singularize>>
-        with <<resourcePathName|!singularize>>pk =
-        {<<resourcePathName|!singularize>>pk}
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              <<exampleItem>>
-      404:
-        body:
-          application/json
-
-traits:
-  basicAuth:
-    headers:
-      Authorization:
-        type: string
-        example: Basic bXVqaW46bXVqaW4=
-        required: true
-  csrfToken:
-    headers:
-      X-CSRFToken:
-        type: string
-        example: token
-        required: true
-      Cookie:
-        type: string
-        example: csrftoken=token
-        required: true
+uses:
+  WebApiOpenRaveEnv: /libraries/webapi-openrave-env.lib.raml
 
 types:
   Meta:
@@ -92,6 +28,78 @@ types:
       downloadUri: string
       datemodified: string
       size: integer
+
+resourceTypes:
+  webapi-openraveenv-collection:
+    description: Collection of available <<resourcePathName>> in the OpenRave environment
+    get:
+      description: Get JSON representation of <<resourcePathName>> list.
+      is: [basicAuth]
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<getCollection>>
+              example: <<exampleCollection>>
+    post:
+      description: |
+        Create a new <<resourcePathName|!singularize>> and add to <<resourcePathName>> list.
+        Returns updated JSON representation of <<resourcePathName>> list after adding <<resourcePathName|!singularize>> to the list.
+      is: [csrfToken]
+      responses:
+        201:
+          body:
+            application/json:
+              type: <<postCollection>>
+              example: <<exampleItem>>
+  webapi-openraveenv-collection-item:
+    description: <<collection-item-description>>
+    get:
+      description: |
+        Get specific <<resourcePathName|!singularize>> resource with <<resourcePathName|!singularize>>pk.
+        Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
+      is: [csrfToken]
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<getCollectionItem>>
+              example: <<exampleItem>>
+        404:
+          body:
+            application/json
+    put:
+      description: |
+        Modify specific <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
+        Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modifications.
+      is: [csrfToken]
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<putCollectionItem>>
+              example: <<exampleItem>>
+        404:
+          body:
+            application/json
+
+traits:
+  basicAuth:
+    headers:
+      Authorization:
+        type: string
+        example: Basic bXVqaW46bXVqaW4=
+        required: true
+  csrfToken:
+    headers:
+      X-CSRFToken:
+        type: string
+        example: token
+        required: true
+      Cookie:
+        type: string
+        example: csrftoken=token
+        required: true
 
 /systeminfo/:
   is: [basicAuth]
