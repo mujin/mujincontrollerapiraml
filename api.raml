@@ -43,7 +43,6 @@ types:
       downloadUri: string
       datemodified: string
       size: integer
-
   CollectionResource: !include schemas/collection.schema
   SceneResource: !include schemas/scene.schema
   ObjectResource: !include schemas/object.schema
@@ -55,7 +54,7 @@ types:
   RobotResource: !include schemas/robot.schema
   ToolResource: !include schemas/tool.schema
   AttachedSensorResource: !include schemas/attachedsensor.schema
-  InstObjectResponse: !include schemas/instobject.schema
+  InstObjectResource: !include schemas/instobject.schema
   InstObjectToolResource: !include schemas/instobjecttool.schema
 
 resourceTypes:
@@ -96,7 +95,8 @@ resourceTypes:
         Deletes specific resource using <<resourcePathName|!singularize>>pk.
         Note that user is not required to send any JSON-serialized dictionary and also does not receive JSON response.
       is: [csrfToken]
-      responses: 204
+      responses:
+        204:
 
   CollectionItemResource:
     is: [basicAuth]
@@ -658,107 +658,142 @@ resourceTypes:
 /api/v1/scene:
   description: |
     This endpoint contains the scene that holds the robot(s), the source and destination containers, and the workpiece(s).
-
   /:
     type:
       CollectionListResource:
-
+        resourceSchema: SceneResource
+        minimumParametersList: "[name]. "
   /{scenepk}/:
     type:
       CollectionItemResource:
         resourceSchema: SceneResource
 
 /api/v1/scene/{scenepk}/instobject:
-  type: CollectionListResource
+  description: |
+    This endpoint contains all of the instance objects in the scene. Instance objects can either be kinetic bodies, e.g. containers, workpieces, or robots.
+    Instance objects are instantiated from object templates and contain additional properties to differentiate instance objects from the same template.
+    For example, robots instantiated from the same robot template may have differing base transforms from the origin that indicate robot base position.
+    Refer to /object/{objectpk} documentation for more information on templates.
+  type:
+    CollectionListResource:
+      resourceSchema: InstObjectResource
+      minimumParametersList: "[name, type]. "
   /{instobjectpk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...testing...
-        resourceSchema: InstObjectResponse
-        resourceSchemaExample: !include examples/instobject.sample
+        resourceSchema: InstObjectResource
 
 /api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
-  type: CollectionListResource:
+  description: |
+    This endpoint contains the tools of the object (robot). Instance object should be a robot to perform CRUD operations on this resource endpoint.
+    Tools are instantiated from robot tools. See /robot/{robotpk} documentation for more information on tool templates. Instantiated tools are primarily used to fine-tune the positon of the robot end-effector (TODO: double-check correctness of statement).
+  type:
+    CollectionListResource:
+      resourceSchema: InstObjectToolResource
+      minimumParametersList: "[name]. "
   /{toolpk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: InstObjectToolResource
-        resourceSchemaExample: !include examples/instobjecttool.sample
 
 /api/v1/object/{objectpk}:
+  description: |
+    This endpoint contains the template of an object, i.e. a kinematic body such as a container or workpiece from which instance objects are created.
+    Templates contain all of the attributes, i.e. properties, common to all instance objects.
+    Note that templates cannot be directly created. Templates are automatically generated when creating a instance object that does not refer to an existing template.
   type:
     ReadModifyOnlyItemResource:
-      resourceDescription: TODO...
-      resourceSchema: ObjectResponse
-      resourceSchemaExample: !include examples/object.sample
+      resourceSchema: ObjectResource
 
 /api/v1/object/{objectpk}/link:
-  type: CollectionListResource
+  description: |
+    This endpoint contains the links of an object. Links are frame transformations that define the positions of components relative to parent components.
+  type:
+    CollectionListResource:
+      resourceSchema: LinkResource
+      minimumParametersList: "[name, parentlink]. "
   /{linkpk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: LinkResource
-        resourceSchemaExample: !include examples/link.sample
 
 /api/v1/object/{objectpk}/attachment:
-  type: CollectionListResource
+  description: |
+    This endpoint contains the attachments of an object. Attachments can be linear, revolute joints and are used to define the relationship between links.
+    (TODO: double-check correctness of statement).
+  type:
+    CollectionListResource:
+      resourceSchema: AttachmentResource
+      minimumParametersList: "[name]. "
   /{attachmentpk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: AttachmentResource
-        resourceSchemaExample: !include examples/attachment.sample
 
 /api/v1/object/{objectpk}/geometry:
-  type: CollectionListResource
+  description: |
+    This endpoint contains the geometries of an object. Geometries are component geometries. Links and attachments define the position, and geometries define the shape of the components, e.g. robot arms.
+  type:
+    CollectionListResource:
+      resourceSchema: GeometryResource
+      minimumParametersList: "[name]. "
   /{geometrypk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: GeometryResource
-        resourceSchemaExample: !include examples/geometry.sample
     
 /api/v1/object/{objectpk}/ikparam:
-  type: CollectionListResource
+  description: |
+    This endpoint contains the inverse kinematics parameters of an object that define the position of the robot end-manipulator, i.e. tool, when grabbing the object.
+  type: 
+    CollectionListResource:
+      resourceSchema: IkParamResource
+      minimumParametersList: "[name]. "
   /{ikparampk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: IkParamResource
-        resourceSchemaExample: !include examples/ikparam.sample
 
 /api/v1/object/{objectpk}/graspset:
-  type: CollectionListResource
+  description: |
+    This endpoint contains the set of inverse kinematics parameters used to grab the object.
+  type:
+    CollectionListResource:
+      resourceSchema: GraspsetResource
+      minimumParametersList: "[name]. "
   /{graspsetpk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: GraspsetResource
-        resourceSchemaExample: !include examples/graspset.sample
     
 /api/v1/robot/{robotpk}/:
+  description: |
+    This endpoint contains the template of a robot. Robot template inherits from object template and thus also has the same endpoints as /object template,
+    e.g. /links, /attachments, /geometries, etc. Also note that this also means that robot template cannot be directly created.
   type:
     ReadModifyOnlyItemResource:
-      resourceDescription: TODO...
       resourceSchema: RobotResource
-      resourceSchemaExample: !include examples/robot.sample
     
 /api/v1/robot/{robotpk}/tool:
-  type: CollectionListResource
+  description: |
+    This endpoint contains the tools of a robot. Tools are frame transformations from the robot arm endpoint to the tool manipulator tip. Instanace tools are instantiated from robot tool templates (TODO: double-check correctness of statement).
+  type:
+    CollectionListResource:
+      resourceSchema: ToolResource
+      minimumParametersList: "[name]. "
   /{toolpk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: ToolResource
-        resourceSchemaExample: !include examples/tool.sample
 
 /api/v1/robot/{robotpk}/attachedsensor:
-  type: CollectionListResource
+  description: |
+    This endpoint contains all sensors of the robot (TODO: expand on explanation).
+  type:
+    CollectionListResource:
+      resourceSchema: AttachedSensorResource
+      minimumParametersList: "[name]. "
   /{attachedsensorpk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: AttachedSensorResource
-        resourceSchemaExample: !include examples/attachedsensor.sample
