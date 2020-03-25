@@ -4,21 +4,25 @@
     "id": "http://jsonschema.net",
     "properties": {
         "name": {
-            "description": "The name of the .dae file describing the robot work environment",
-            "type": "string",
+            "description": "The name of the .dae file describing the robot work environment.",
+            "type": "string"
         },
         "pk": {
             "description": "The pk value that uniquely identifies the .dae file. This value cannot be modified.",
-            "type": "string",
+            "type": "string"
+        },
+        "reference_uri": {
+            "description": "The reference_uri value refers to the existing scene file to be copied.",
+            "type": "string"
         },
         "author": {
             "description": "Author of the .dae file.",
-            "type": "string",
+            "type": "string"
         },
         "keywords": {
             "description": "Resource description.",
             "type": "string",
-            "enum": ["part,incomplete", "test"],
+            "enum": ["part,incomplete", "test"]
         }
     }
 }

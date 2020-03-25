@@ -1,5 +1,19 @@
 {
     "type": "object",
     "$schema": "http://json-schema.org/draft-03/schema",
-    "properties": {}
+    "id": "http://jsonschema.net",
+    "properties": {
+        "name": {
+            "description": "The name of the instance object tool resource.",
+            "type": "string"
+        },
+        "pk": {
+            "description": "The pk value uniquely identifies the instance object tool resource. This value cannot be modified.",
+            "type": "string"
+        },
+        "reference_pk": {
+            "description": "The pk value of the reference instance object tool resource to be copied.",
+            "type": "string"
+        }
+    }
 }
