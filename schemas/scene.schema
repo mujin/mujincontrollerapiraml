@@ -1,5 +1,24 @@
 {
     "type": "object",
     "$schema": "http://json-schema.org/draft-03/schema",
-    "properties": {}
+    "id": "http://jsonschema.net",
+    "properties": {
+        "name": {
+            "description": "The name of the .dae file describing the robot work environment",
+            "type": "string",
+        },
+        "pk": {
+            "description": "The pk value that uniquely identifies the .dae file. This value cannot be modified.",
+            "type": "string",
+        },
+        "author": {
+            "description": "Author of the .dae file.",
+            "type": "string",
+        },
+        "keywords": {
+            "description": "Resource description.",
+            "type": "string",
+            "enum": ["part,incomplete", "test"],
+        }
+    }
 }

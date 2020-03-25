@@ -43,6 +43,7 @@ types:
       downloadUri: string
       datemodified: string
       size: integer
+
   CollectionResource: !include schemas/collection.schema
   SceneResource: !include schemas/scene.schema
   ObjectResource: !include schemas/object.schema
@@ -54,86 +55,112 @@ types:
   RobotResource: !include schemas/robot.schema
   ToolResource: !include schemas/tool.schema
   AttachedSensorResource: !include schemas/attachedsensor.schema
-  InstObjectResource: !include schemas/instobject.schema
+  InstObjectResponse: !include schemas/instobject.schema
   InstObjectToolResource: !include schemas/instobjecttool.schema
 
 resourceTypes:
-  CollectionResource:
-    description: Collection of available <<resourcePathName>> in the OpenRave environment
+  CollectionListResource:
     is: [basicAuth]
     get:
-      description: Get JSON representation of <<resourcePathName>> list.
+      description: |
+        Retrieves <<resourcePathName>> list.
+        Note that list contents can be filtered based on query parameters, i.e. modifying the header "fields" value.
+        Refer to the "properties" section in the schema below for valid filters.
+        Returns JSON response containing resource list.
+      body:
+        application/json:
+          type: <<resourceSchema>>
       responses:
         200:
           body:
             application/json:
               type: CollectionResource
-              example: !include examples/collection.sample
     post:
       description: |
-        Create a new <<resourcePathName|!singularize>> and add to <<resourcePathName>> list.
-        Returns updated JSON representation of <<resourcePathName>> list after adding <<resourcePathName|!singularize>> to the list.
+        Creates a new <<resourcePathName|!singularize>> and add to <<resourcePathName>> list.
+        Request requires users to send JSON-serialized dictionary containing parameters for resource initialization.
+        Refer to the "properties" section in the schema below for necessary and/or valid parameters for intialization.
+        The following parameters are required for a minimally-defined resource: <<minimumParametersList>>
+        Returns JSON response containing updated JSON representation of <<resourcePathName>> list.
       is: [csrfToken]
+      body:
+        application/json:
+          type: <<resourceSchema>>
       responses:
         201:
           body:
             application/json:
               type: CollectionResource
-              example: !include examples/collection.sample
-  CollectionItemResource:
-    description: <<resourceDescription>>
-    is: [basicAuth]
-    get:
-      description: |
-        Get specific resource <<resourcePathName|!singularize>> with <<resourcePathName|!singularize>>pk.
-        Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
-      responses:
-        200:
-          body:
-            application/json:
-              type: <<resourceSchema>>
-              example: <<resourceSchemaExample>>
-    put:
-      description: |
-        Modify specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
-        Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modifications.
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-              type: <<resourceSchema>>
-              example: <<resourceSchemaExample>>
     delete:
       description: |
-        Delete specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
+        Deletes specific resource using <<resourcePathName|!singularize>>pk.
+        Note that user is not required to send any JSON-serialized dictionary and also does not receive JSON response.
       is: [csrfToken]
-      responses:
-        204:
-  ReadModifyOnlyItemResource:
-    description: <<resourceDescription>>
+      responses: 204
+
+  CollectionItemResource:
     is: [basicAuth]
     get:
       description: |
-        Get specific resource <<resourcePathName|!singularize>> with <<resourcePathName|!singularize>>pk.
+        Retrieves specific resource with <<resourcePathName|!singularize>>pk.
+        Note that list contents can be filtered based on query parameters, i.e. modifying the headers.
+        Refer to the "properties" section in the schema below for valid filters.
         Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
+      body:
+        application/json:
+          type: <<resourceSchema>>
       responses:
         200:
           body:
             application/json:
               type: <<resourceSchema>>
-              example: <<resourceSchemaExample>>
     put:
       description: |
-        Modify specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
-        Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modifications.
+        Modifies specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
+        Request requires users to send JSON-serialized dictionary containing parameters for resource modification.
+        Refer to the "properties" section in the schema below for resource parameters that can be modified.
+        Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modification.
       is: [csrfToken]
+      body:
+        application/json:
+          type: <<resourceSchema>>
       responses:
         202:
           body:
             application/json:
               type: <<resourceSchema>>
-              example: <<resourceSchemaExample>>
+
+  ReadModifyOnlyItemResource:
+    is: [basicAuth]
+    get:
+      description: |
+        Retrieves specific resource with <<resourcePathName|!singularize>>pk.
+        Note that list contents can be filtered based on query parameters, i.e. modifying the headers.
+        Refer to the "properties" section in the schema below for valid filters.
+        Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
+      body:
+        application/json:
+          type: <<resourceSchema>>
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<resourceSchema>>
+    put:
+      description: |
+        Modifies specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
+        Request requires users to send JSON-serialized dictionary containing parameters for resource modification.
+        Refer to the "properties" section in the schema below for resource parameters that can be modified.
+        Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modification.
+      is: [csrfToken]
+      body:
+        application/json:
+          type: <<resourceSchema>>
+      responses:
+        202:
+          body:
+            application/json:
+              type: <<resourceSchema>>
 
 /systeminfo/:
   is: [basicAuth]
@@ -629,31 +656,29 @@ resourceTypes:
         204:
 
 /api/v1/scene:
+  description: |
+    This endpoint contains the scene that holds the robot(s), the source and destination containers, and the workpiece(s).
+
   /:
     type:
-      CollectionResource:
+      CollectionListResource:
+
   /{scenepk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
         resourceSchema: SceneResource
-        resourceSchemaExample: !include examples/scene.sample
 
 /api/v1/scene/{scenepk}/instobject:
-  /:
-    type:
-      CollectionResource:
+  type: CollectionListResource
   /{instobjectpk}/:
     type:
       CollectionItemResource:
-        resourceDescription: TODO...
-        resourceSchema: InstObjectResource
+        resourceDescription: TODO...testing...
+        resourceSchema: InstObjectResponse
         resourceSchemaExample: !include examples/instobject.sample
 
 /api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
-  /:
-    type:
-      CollectionResource:
+  type: CollectionListResource:
   /{toolpk}/:
     type:
       CollectionItemResource:
@@ -662,28 +687,23 @@ resourceTypes:
         resourceSchemaExample: !include examples/instobjecttool.sample
 
 /api/v1/object/{objectpk}:
-  /:
-    type:
-      ReadModifyOnlyItemResource:
-        resourceDescription: TODO...
-        resourceSchema: ObjectResource
-        resourceSchemaExample: !include examples/object.sample
+  type:
+    ReadModifyOnlyItemResource:
+      resourceDescription: TODO...
+      resourceSchema: ObjectResponse
+      resourceSchemaExample: !include examples/object.sample
 
 /api/v1/object/{objectpk}/link:
-  /:
-    type:
-        CollectionResource:
+  type: CollectionListResource
   /{linkpk}/:
-  type:
+    type:
       CollectionItemResource:
         resourceDescription: TODO...
         resourceSchema: LinkResource
         resourceSchemaExample: !include examples/link.sample
 
 /api/v1/object/{objectpk}/attachment:
-  /:
-    type:
-      CollectionResource:
+  type: CollectionListResource
   /{attachmentpk}/:
     type:
       CollectionItemResource:
@@ -692,9 +712,7 @@ resourceTypes:
         resourceSchemaExample: !include examples/attachment.sample
 
 /api/v1/object/{objectpk}/geometry:
-  /:
-    type:
-      Collection:
+  type: CollectionListResource
   /{geometrypk}/:
     type:
       CollectionItemResource:
@@ -703,9 +721,7 @@ resourceTypes:
         resourceSchemaExample: !include examples/geometry.sample
     
 /api/v1/object/{objectpk}/ikparam:
-  /:
-    type:
-      Collection:
+  type: CollectionListResource
   /{ikparampk}/:
     type:
       CollectionItemResource:
@@ -714,28 +730,23 @@ resourceTypes:
         resourceSchemaExample: !include examples/ikparam.sample
 
 /api/v1/object/{objectpk}/graspset:
-  /:
-    type:
-      Collection:
+  type: CollectionListResource
   /{graspsetpk}/:
     type:
       CollectionItemResource:
         resourceDescription: TODO...
-        resourceSchema: GraspSetResource
+        resourceSchema: GraspsetResource
         resourceSchemaExample: !include examples/graspset.sample
     
 /api/v1/robot/{robotpk}/:
-  /:
-    type:
-      ReadModifyOnlyItemResource:
-        resourceDescription: TODO...
-        resourceSchema: RobotResource
-        resourceSchemaExample: !include examples/robot.sample
+  type:
+    ReadModifyOnlyItemResource:
+      resourceDescription: TODO...
+      resourceSchema: RobotResource
+      resourceSchemaExample: !include examples/robot.sample
     
 /api/v1/robot/{robotpk}/tool:
-  /:
-    type:
-      Collection:
+  type: CollectionListResource
   /{toolpk}/:
     type:
       CollectionItemResource:
@@ -744,9 +755,7 @@ resourceTypes:
         resourceSchemaExample: !include examples/tool.sample
 
 /api/v1/robot/{robotpk}/attachedsensor:
-  /:
-    type:
-      Collection:
+  type: CollectionListResource
   /{attachedsensorpk}/:
     type:
       CollectionItemResource:
