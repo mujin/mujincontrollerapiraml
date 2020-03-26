@@ -3,13 +3,13 @@
     "$schema": "http://json-schema.org/draft-03/schema",
     "id": "http://jsonschema.net",
     "properties": {
-    	"object": {
-    		"description": "List of resources represented by dictionaries.",
-    		"type": "array"
-    	}, 
-    	"meta": {
-    		"description": "Contains meta information, e.g. number of resources, etc.",
-    		"type": "object"
-    	}
+        "object": {
+            "description": "List of resources represented by dictionaries.",
+            "type": "array"
+        }, 
+        "meta": {
+            "description": "Contains meta information, e.g. number of resources, etc.",
+            "type": "object"
+        }
     }
 }
