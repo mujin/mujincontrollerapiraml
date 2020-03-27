@@ -3,7 +3,7 @@
     "$schema": "http://json-schema.org/draft-03/schema",
     "id": "http://jsonschema.net",
     "properties": {
-    	"object": {
+    	"objects": {
     		"description": "List of resources represented by dictionaries.",
     		"type": "array"
     	}, 

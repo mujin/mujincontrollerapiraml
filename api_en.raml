@@ -63,6 +63,9 @@ types:
         description: Timestamp of last modification
       size:
         description: Size of the debug resource, hint for downloading
+  CollectionResource:
+    objects:
+      description:
 
 /systeminfo/:
   displayName: System information
@@ -131,3 +134,75 @@ types:
 
 /api/v1/debug:
   displayName: Debug logs
+
+/api/v1/scene:
+  displayName: Modify simulation scene
+  description: |
+    This endpoint contains the scene that holds the robot(s), the source and destination containers, and the workpiece(s).
+  /:
+    get:
+      description: |
+        Returns JSON response containing resource list.
+        List contents can be filtered based on query parameters.
+        Refer to the "properties" section in the schema below for valid filters.        
+  /{scenepk}/:
+
+
+/api/v1/scene/{scenepk}/instobject:
+  /:
+
+  /{instobjectpk}/:
+
+
+/api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
+  /:
+
+
+/api/v1/object/{objectpk}:
+  /:
+
+
+/api/v1/object/{objectpk}/link:
+  /:
+
+  /{linkpk}/:
+
+
+/api/v1/object/{objectpk}/attachment:
+  /:
+
+  /{attachmentpk}/:
+
+
+/api/v1/object/{objectpk}/geometry:
+  /:
+
+  /{geometrypk}/:
+
+
+/api/v1/object/{objectpk}/ikparam:
+  /:
+
+  /{ikparampk}/:
+
+
+/api/v1/object/{objectpk}/graspset:
+  /:
+
+  /{graspsetpk}/:
+
+
+/api/v1/robot/{robotpk}:
+  /:
+
+
+/api/v1/robot/{robotpk}/tool:
+  /:
+
+  /{toolpk}/:
+
+
+/api/v1/robot/{robotpk}/attachedsensor:
+  /:
+
+  /{attachedsensorpk}/:
