@@ -173,7 +173,13 @@ resourceTypes:
 
   CollectionItemResource:
     get:
-      description: Retrieves resource based on user-specified resource pk.
+      description: Retrieves resource based on user-specified resource pk. Resource contents can be filtered base on query parameters.
+    put:
+      description: Modifies resource based on user-specified resource pk and user-sent JSON-serialized dictionary containing parameters for resource modification.
+
+  ReadModifyOnlyItemResource:
+    get:
+      description: Retrieves resource based on user-specified resource pk. Resource contents can be filtered base on query parameters.
     put:
       description: Modifies resource based on user-specified resource pk and user-sent JSON-serialized dictionary containing parameters for resource modification.
 
