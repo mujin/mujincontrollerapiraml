@@ -53,21 +53,31 @@ types:
 
   # IMPORTANT:
   # ExampleResource*Base schema (type) is used for ExampleResource*Request and ExamplesResource*Response type inheritance.
-  # ExampleResource*Request schema (type) is (ONLY) used for POST documentation.
-  # ExampleResource*Response schema (type) is used for typing and content validation for specific resources.
+  # ExampleResource*GetResponse schema (type) is used for typing and content validation for specific resources.
+  # ExampleResource*PostRequest schema (type) is (ONLY) used for POST documentation.
+  # ExampleResource*PutRequest schema (type) is (ONLY) used for PUT documentation.
+  # Make attributes required = false by default (in base resource) due to filtering (and because not many attributes have to be manually set to true for minimally defined resource objects)
 
   BaseItemResource:
     type: object
     properties:
-      name: string
-  BaseItemResourceRequest:
+      name?: string
+    # Expand this section for all common attributes shared by all resources and all GET, POST, and PUT methods
+  BaseItemResourceGetResponse:
     type: BaseItemResource
     properties:
+      pk?: string
+    # Expand this section for all (non-mutable) attributes shared by all resources for GET methods
+  BaseItemResourcePostRequest:
+    type: BaseItemResource
+    properties:
+      name:
+        required: true
       reference_pk?: string
-  BaseItemResourceResponse:
+    # Expand this section for all attributes shared by all resources for POST methods
+  BaseItemResourcePutRequest:
     type: BaseItemResource
-    properties:
-      pk: string
+    # This section is for all attributes shared by all resources for PUT methods
   
   SceneResourceBase:
     type: BaseItemResource
@@ -76,47 +86,44 @@ types:
       keywords?:
         type: string
         enum: ["'part,incomplete'", test]
-  SceneResourceRequest:
-    type: [BaseItemResourceRequest, SceneResourceBase]
-    # In the future, can expand this section for POST-specific, scene-specific attributes
-  SceneResourceResponse:
-    type: [BaseItemResourceResponse, SceneResourceBase]
+  SceneResourceGetResponse:
+    type: [BaseItemResourceGetResponse, SceneResourceBase]
     # In the future, can expand this section for non-mutable attributes
+  SceneResourcePostRequest:
+    type: [BaseItemResourcePostRequest, SceneResourceBase]
+    # In the future, can expand this section for POST-specific, scene-specific attributes
+  SceneResourcePutRequest:
+    type: [BaseItemResourcePutRequest, SceneResourceBase]
 
   ObjectResourceBase:
     type: BaseItemResource
-    # In the future, can expand this section to define common attributes for object template
-  ObjectResourceRequest:
-    type: [BaseItemResourceRequest, ObjectResourceBase]
-    # In the future, can expand this section for POST-specific, object-specific attributes
-  ObjectResourceResponse:
-    type: [BaseItemResponseResponse, ObjectResourceBase]
-    # In the future, can expand this section for non-mutable attributes
+  ObjectResourceGetResponse:
+    type: [BaseItemResourceGetResponse, ObjectResourceBase]
+  ObjectResourcePutRequest:
+    type: [BaseItemResourcePutRequest, ObjectResourceBase]
 
   LinkResourceBase:
     type: BaseItemResource
     properties:
       parentlinkpk?: string
-    # In the future, can expand this section to define common attributes for links 
-  LinkResourceRequest:
-    type: [BaseItemResourceRequest, LinkResourceBase]
+  LinkResourceGetResponse:
+    type: [BaseItemResourceGetResponse, LinkResourceBase]
+  LinkResourcePostRequest:
+    type: [BaseItemResourcePostRequest, LinkResourceBase]
     properties:
       parentlinkpk:
         required: true
-    # In the future, can expand this section for POST-specific, link-specific attributes
-  LinkResourceResponse:
-    type: [BaseItemResourceResponse, LinkResourceBase]
-    # In the future, can expand this section for non-mutable attributes
+  LinkResourcePutRequest:
+    type: [BaseItemResourcePutRequest, LinkResourceBase]
 
   AttachmentResourceBase:
     type: BaseItemResource
-    # In the future, can expand this section to define common attributes for attachments   
-  AttachmentResourceRequest:
-    type: [BaseItemResourceRequest, AttachmentResourceBase]
-    # In the future, can expand this section to define POST-specific, attachment-specific attributes
-  AttachmentResourceResponse:
-    type: [BaseItemResourceResponse, AttachmentResourceBase]
-    # In the future, can expand this section for non-mutable attributes
+  AttachmentResourceGetResponse:
+    type: [BaseItemResourceGetResponse, AttachmentResourceBase]
+  AttachmentResourcePostRequest:
+    type: [BaseItemResourcePostRequest, AttachmentResourceBase]
+  AttachmentResourcePutRequest:
+    type: [BaseItemResourcePutRequest, AttachmentResourceBase]
 
   GeometryResourceBase:
     type: BaseItemResource
@@ -128,77 +135,84 @@ types:
       diffusecolor?:
         type: array
         example: [1, 1, 0, 1]
-    # In the future, can expand this section to define common attributes for geometries
-  GeometryResourceBaseRequest:
-    type: [BaseItemResourceRequest, GeometryResourceBase]
+  GeometryResourceGetResponse:
+    type: [BaseItemResourceGetResponse, GeometryResourceBase]
+  GeometryResourcePostRequest:
+    type: [BaseItemResourcePostRequest, GeometryResourceBase]
     properties:
       linkpk:
         required: true
       geomtype:
         required: true
-    # In the future, can expand this section to define POST-specific, geometry-specific attributes
-  GeometryResourceBaseResponse:
-    diffusecolor: array
-    type: [BaseItemResourceResponse, GeometryResourceBase]
+  GeometryResourcePutRequest:
+    type: [BaseItemResourcePutRequest, GeometryResourceBase]
 
   IkParamResourceBase:
     type: BaseItemResource
-    # In the future, can expand this section to define common attributes for ikparam
-  IkParamResourceRequest:
-    type: [BaseItemResource, IkParamResourceBase]
-    # In the future, can expand this section to define POST-specific, ikparam-specific attributes
-  IkParamResourceResponse:
-    type: [BaseItemResource, IkParamResourceBase]
+  IkParamResourceGetResponse:
+    type: [BaseItemResourceGetResponse, IkParamResourceBase]
+  IkParamResourcePostRequest:
+    type: [BaseItemResourcePostRequest, IkParamResourceBase]
+  IkParamResourceGetRequest:
+    type: [BaseItemResourcePutRequest, IkParamResourceBase]
 
   GraspsetResourceBase:
     type: BaseItemResource
     properties:
       ikparampks?: array
-    # In the future, can expand this section to define common attributes for graspset
-  GraspsetResourceRequest:
-    type: [BaseItemResource, GraspsetResourceBase]
-    # In the future, can expand this section to define POST-specific, graspset-specific attributes
-  GraspsetResourceResponse:
-    type: [BaseItemResource, GraspsetResourceBase]
+  GraspsetResourceGetResponse:
+    type: [BaseItemResourceGetResponse, GraspsetResourceBase]
+  GraspsetResourcePostRequest:
+    type: [BaseItemResourcePostRequest, GraspsetResourceBase]
+  GraspsetResourcePutRequest:
+    type: [BaseItemResourcePutRequest, GraspsetResourceBase]
   
   RobotResourceBase:
-    type: BaseItemResource      
-  RobotResourceRequest:
-    type: [BaseItemResource, RobotResourceBase]
-  RobotResourceResponse:
-    type: [BaseItemResource, RobotResourceBase]
+    type: ObjectResourceBase      
+  RobotResourceGetResponse:
+    type: [BaseItemResourceGetResponse, RobotResourceBase]
+  RobotResourcePostRequest:
+    type: [BaseItemResourcePostRequest, RobotResourceBase]
 
   ToolResourceBase:
     type: BaseItemResource
-  ToolResourceRequest:
-    type: [BaseItemResource, RobotResourceBase]
-  ToolResourceResponse:
-    type: [BaseItemResource, RobotResourceBase]
+  ToolResourceGetResponse:
+    type: [BaseItemResourceGetResponse, RobotResourceBase]
+  ToolResourcePostRequest:
+    type: [BaseItemResourcePostRequest, RobotResourceBase]
+  ToolResourcePutRequest:
+    type: [BaseItemResourcePutRequest, RobotResourceBase]
 
   AttachedSensorResourceBase:
     type: BaseItemResource
-  AttachedSensorResourceRequest:
-    type: [BaseItemResource, RobotResourceBase]
-  AttachedSensorResourceResponse:
-    type: [BaseItemResource, RobotResourceBase]
+  AttachedSensorResourceGetResponse:
+    type: [BaseItemResourceGetResponse, RobotResourceBase]
+  AttachedSensorResourcePostRequest:
+    type: [BaseItemResourcePostRequest, RobotResourceBase]
+  AttachedSensorResourcePutRequest:
+    type: [BaseItemResourcePutRequest, RobotResourceBase]
 
   InstObjectResourceBase:
     type: BaseItemResource
-  InstObjectResourceRequest:
-    type: [BaseItemResource, RobotResourceBase]
+  InstObjectResourceGetResponse:
+    type: [BaseItemResourceGetResponse, RobotResourceBase]
+  InstObjectResourcePostRequest:
+    type: [BaseItemResourcePostRequest, RobotResourceBase]
     properties:
       type?:
         type: string
         enum: [object, robot]
-  InstObjectResourceResponse:
-    type: [BaseItemResource, RobotResourceBase]
+  InstObjectResourcePutRequest:
+    type: [BaseItemResourcePutRequest, RobotResourceBase]
 
   InstObjectResourceToolBase:
     type: BaseItemResource
-  InstObjectResourceToolRequest:
-    type: [BaseItemResource, RobotResourceBase]
-  InstObjectResourceToolResponse:
-    type: [BaseItemResource, RobotResourceBase]
+  InstObjectResourceToolGetResponse:
+    type: [BaseItemResourceGetResponse, RobotResourceBase]
+  InstObjectResourceToolPostRequest:
+    type: [BaseItemResourcePostRequest, RobotResourceBase]
+  InstObjectResourceToolPutRequest:
+    type: [BaseItemResourcePutRequest, RobotResourceBase]
 
 resourceTypes:
   CollectionListResource:
@@ -794,12 +808,12 @@ resourceTypes:
   /:
     type:
       CollectionListResource:
-        resourceSchema: SceneResourceResponse
+        resourceSchema: SceneResourcePutRequest
         minimumParametersList: "[name]. "
   /{scenepk}/:
     type:
       CollectionItemResource:
-        resourceSchema: SceneResourceResponse
+        resourceSchema: SceneResourcePutRequest
 
 /api/v1/scene/{scenepk}/instobject:
   description: |
