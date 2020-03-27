@@ -61,19 +61,25 @@ types:
   BaseItemResource:
     type: object
     properties:
-      name?: string
+      name:
+        type: string
+        required: false
     # Expand this section for all common attributes shared by all resources and all GET, POST, and PUT methods
   BaseItemResourceGetResponse:
     type: BaseItemResource
     properties:
-      pk?: string
+      pk:
+        type: string
+        required: false
     # Expand this section for all (non-mutable) attributes shared by all resources for GET methods
   BaseItemResourcePostRequest:
     type: BaseItemResource
     properties:
       name:
         required: true
-      reference_pk?: string
+      reference_pk:
+        type: string
+        required: false
     # Expand this section for all attributes shared by all resources for POST methods
   BaseItemResourcePutRequest:
     type: BaseItemResource
@@ -82,14 +88,15 @@ types:
   SceneResourceBase:
     type: BaseItemResource
     properties:
-      author?:
+      author:
         type: string
         default: ''
-      keywords?:
+        required: false
+      keywords:
         type: string
         enum: ['', "'part,incomplete'", test]
         default: ''
-
+        required: false
   SceneResourceGetResponse:
     type: [BaseItemResourceGetResponse, SceneResourceBase]
     # In the future, can expand this section for non-mutable attributes
@@ -109,7 +116,9 @@ types:
   LinkResourceBase:
     type: BaseItemResource
     properties:
-      parentlinkpk?: string
+      parentlinkpk:
+        type: string
+        required: false
   LinkResourceGetResponse:
     type: [BaseItemResourceGetResponse, LinkResourceBase]
   LinkResourcePostRequest:
@@ -132,13 +141,17 @@ types:
   GeometryResourceBase:
     type: BaseItemResource
     properties:
-      linkpk?: string
-      geomtype?:
+      linkpk:
+        type: string
+        required: false
+      geomtype:
         type: string
         enum: [box, sphere]
-      diffusecolor?:
+        required: false
+      diffusecolor:
         type: array
         example: [1, 1, 0, 1]
+        required: false
   GeometryResourceGetResponse:
     type: [BaseItemResourceGetResponse, GeometryResourceBase]
   GeometryResourcePostRequest:
@@ -157,14 +170,16 @@ types:
     type: [BaseItemResourceGetResponse, IkParamResourceBase]
   IkParamResourcePostRequest:
     type: [BaseItemResourcePostRequest, IkParamResourceBase]
-  IkParamResourceGetRequest:
+  IkParamResourcePutRequest:
     type: [BaseItemResourcePutRequest, IkParamResourceBase]
 
   GraspsetResourceBase:
     type: BaseItemResource
     properties:
-      ikparampks?: array
-      default: []
+      ikparampks:
+        type: array
+        default: []
+        required: false
   GraspsetResourceGetResponse:
     type: [BaseItemResourceGetResponse, GraspsetResourceBase]
   GraspsetResourcePostRequest:
@@ -176,49 +191,50 @@ types:
     type: ObjectResourceBase      
   RobotResourceGetResponse:
     type: [BaseItemResourceGetResponse, RobotResourceBase]
-  RobotResourcePostRequest:
-    type: [BaseItemResourcePostRequest, RobotResourceBase]
+  RobotResourcePutRequest:
+    type: [BaseItemResourcePutRequest, RobotResourceBase]
 
   ToolResourceBase:
     type: BaseItemResource
   ToolResourceGetResponse:
-    type: [BaseItemResourceGetResponse, RobotResourceBase]
+    type: [BaseItemResourceGetResponse, ToolResourceBase]
   ToolResourcePostRequest:
-    type: [BaseItemResourcePostRequest, RobotResourceBase]
+    type: [BaseItemResourcePostRequest, ToolResourceBase]
   ToolResourcePutRequest:
-    type: [BaseItemResourcePutRequest, RobotResourceBase]
+    type: [BaseItemResourcePutRequest, ToolResourceBase]
 
   AttachedSensorResourceBase:
     type: BaseItemResource
   AttachedSensorResourceGetResponse:
-    type: [BaseItemResourceGetResponse, RobotResourceBase]
+    type: [BaseItemResourceGetResponse, AttachedSensorResourceBase]
   AttachedSensorResourcePostRequest:
-    type: [BaseItemResourcePostRequest, RobotResourceBase]
+    type: [BaseItemResourcePostRequest, AttachedSensorResourceBase]
   AttachedSensorResourcePutRequest:
-    type: [BaseItemResourcePutRequest, RobotResourceBase]
+    type: [BaseItemResourcePutRequest, AttachedSensorResourceBase]
 
   InstObjectResourceBase:
     type: BaseItemResource
   InstObjectResourceGetResponse:
-    type: [BaseItemResourceGetResponse, RobotResourceBase]
+    type: [BaseItemResourceGetResponse, InstObjectResourceBase]
   InstObjectResourcePostRequest:
-    type: [BaseItemResourcePostRequest, RobotResourceBase]
+    type: [BaseItemResourcePostRequest, InstObjectResourceBase]
     properties:
-      type?:
+      type:
         type: string
         enum: [object, robot]
         default: object
+        required: false
   InstObjectResourcePutRequest:
-    type: [BaseItemResourcePutRequest, RobotResourceBase]
+    type: [BaseItemResourcePutRequest, InstObjectResourceBase]
 
-  InstObjectResourceToolBase:
+  InstObjectToolResourceBase:
     type: BaseItemResource
-  InstObjectResourceToolGetResponse:
-    type: [BaseItemResourceGetResponse, RobotResourceBase]
-  InstObjectResourceToolPostRequest:
-    type: [BaseItemResourcePostRequest, RobotResourceBase]
-  InstObjectResourceToolPutRequest:
-    type: [BaseItemResourcePutRequest, RobotResourceBase]
+  InstObjectToolResourceGetResponse:
+    type: [BaseItemResourceGetResponse, InstObjectToolResourceBase]
+  InstObjectToolResourcePostRequest:
+    type: [BaseItemResourcePostRequest, InstObjectToolResourceBase]
+  InstObjectToolResourcePutRequest:
+    type: [BaseItemResourcePutRequest, InstObjectToolResourceBase]
 
 resourceTypes:
   CollectionListResource:
@@ -779,139 +795,111 @@ resourceTypes:
   /:
     type:
       CollectionListResource:
-        resourceSchema: SceneResourcePutRequest
-        minimumParametersList: "[name]. "
+        resourcePostSchema: SceneResourcePostRequest
   /{scenepk}/:
     type:
       CollectionItemResource:
-        resourceSchema: SceneResourcePutRequest
+        resourceGetSchema: SceneResourceGetResponse
+        resourcePutSchema: SceneResourcePutRequest
 
 /api/v1/scene/{scenepk}/instobject:
-  description: |
-    This endpoint contains all of the instance objects in the scene. Instance objects can either be kinetic bodies, e.g. containers, workpieces, or robots.
-    Instance objects are instantiated from object templates and contain additional properties to differentiate instance objects from the same template.
-    For example, robots instantiated from the same robot template may have differing base transforms from the origin that indicate robot base position.
-    Refer to /object/{objectpk} documentation for more information on templates.
   type:
     CollectionListResource:
-      resourceSchema: InstObjectResource
-      minimumParametersList: "[name, type]. "
+      resourcePostSchema: InstObjectResourcePostRequest
   /{instobjectpk}/:
     type:
       CollectionItemResource:
-        resourceSchema: InstObjectResource
+        resourceGetSchema: InstObjectResourceGetResponse
+        resourcePutSchema: InstObjectResourcePutRequest
 
 /api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
-  description: |
-    This endpoint contains the tools of the object (robot). Instance object should be a robot to perform CRUD operations on this resource endpoint.
-    Tools are instantiated from robot tools. See /robot/{robotpk} documentation for more information on tool templates. Instantiated tools are primarily used to fine-tune the positon of the robot end-effector (TODO: double-check correctness of statement).
   type:
     CollectionListResource:
-      resourceSchema: InstObjectToolResource
-      minimumParametersList: "[name]. "
+      resourcePostSchema: InstObjectToolResourcePostRequest
   /{toolpk}/:
     type:
       CollectionItemResource:
-        resourceSchema: InstObjectToolResource
+        resourceGetSchema: InstObjectToolResourceGetResponse
+        resourcePutSchema: InstObjectToolResourcePutRequest
 
 /api/v1/object/{objectpk}:
-  description: |
-    This endpoint contains the template of an object, i.e. a kinematic body such as a container or workpiece from which instance objects are created.
-    Templates contain all of the attributes, i.e. properties, common to all instance objects.
-    Note that templates cannot be directly created. Templates are automatically generated when creating a instance object that does not refer to an existing template.
   type:
     ReadModifyOnlyItemResource:
-      resourceSchema: ObjectResource
+      resourceGetSchema: ObjectResourceGetResponse
+      resourcePutSchema: ObjectResourcePutRequest
 
 /api/v1/object/{objectpk}/link:
-  description: |
-    This endpoint contains the links of an object. Links are frame transformations that define the positions of components relative to parent components.
   type:
     CollectionListResource:
-      resourceSchema: LinkResource
-      minimumParametersList: "[name, parentlink]. "
+      resourcePostSchema: LinkResourcePostRequest
   /{linkpk}/:
     type:
       CollectionItemResource:
-        resourceSchema: LinkResource
+        resourceGetSchema: LinkResourceGetResponse
+        resourcePutSchema: LinkResourcePutRequest
 
 /api/v1/object/{objectpk}/attachment:
-  description: |
-    This endpoint contains the attachments of an object. Attachments can be linear, revolute joints and are used to define the relationship between links.
-    (TODO: double-check correctness of statement).
   type:
     CollectionListResource:
-      resourceSchema: AttachmentResource
-      minimumParametersList: "[name]. "
+      resourcePostSchema: AttachmentResourcePostRequest
   /{attachmentpk}/:
     type:
       CollectionItemResource:
-        resourceSchema: AttachmentResource
+        resourceGetSchema: AttachmentResourceGetResponse
+        resourcePutSchema: AttachmentResourcePutRequest
 
 /api/v1/object/{objectpk}/geometry:
-  description: |
-    This endpoint contains the geometries of an object. Geometries are component geometries. Links and attachments define the position, and geometries define the shape of the components, e.g. robot arms.
   type:
     CollectionListResource:
-      resourceSchema: GeometryResource
-      minimumParametersList: "[name]. "
+      resourcePostSchema: GeometryResourcePostRequest
   /{geometrypk}/:
     type:
       CollectionItemResource:
-        resourceSchema: GeometryResource
+        resourceGetSchema: GeometryResourceGetResponse
+        resourcePutSchema: GeometryResourcePutRequest
     
 /api/v1/object/{objectpk}/ikparam:
-  description: |
-    This endpoint contains the inverse kinematics parameters of an object that define the position of the robot end-manipulator, i.e. tool, when grabbing the object.
   type: 
     CollectionListResource:
-      resourceSchema: IkParamResource
-      minimumParametersList: "[name]. "
+      resourcePostSchema: IkParamResourcePostRequest
   /{ikparampk}/:
     type:
       CollectionItemResource:
-        resourceSchema: IkParamResource
+        resourceGetSchema: IkParamResourceGetResponse
+        resourcePutSchema: IkParamResourcePutRequest
 
 /api/v1/object/{objectpk}/graspset:
-  description: |
-    This endpoint contains the set of inverse kinematics parameters used to grab the object.
   type:
     CollectionListResource:
-      resourceSchema: GraspsetResource
-      minimumParametersList: "[name]. "
+      resourcePostSchema: GraspsetResourcePostRequest
   /{graspsetpk}/:
     type:
       CollectionItemResource:
-        resourceSchema: GraspsetResource
+        resourceGetSchema: GraspsetResourceGetResponse
+        resourcePutSchema: GraspsetResourcePutRequest
     
 /api/v1/robot/{robotpk}/:
-  description: |
-    This endpoint contains the template of a robot. Robot template inherits from object template and thus also has the same endpoints as /object template,
-    e.g. /links, /attachments, /geometries, etc. Also note that this also means that robot template cannot be directly created.
   type:
     ReadModifyOnlyItemResource:
-      resourceSchema: RobotResource
+      resourceGetSchema: RobotResourceGetResponse
+      resourcePutSchema: RobotResourcePutRequest
     
 /api/v1/robot/{robotpk}/tool:
-  description: |
-    This endpoint contains the tools of a robot. Tools are frame transformations from the robot arm endpoint to the tool manipulator tip. Instanace tools are instantiated from robot tool templates (TODO: double-check correctness of statement).
   type:
     CollectionListResource:
-      resourceSchema: ToolResource
-      minimumParametersList: "[name]. "
+      resourcePostSchema: ToolResourcePostRequest
   /{toolpk}/:
     type:
       CollectionItemResource:
-        resourceSchema: ToolResource
+        resourceGetSchema: ToolResourceGetResponse
+        resourcePutSchema: ToolResourcePutRequest
 
 /api/v1/robot/{robotpk}/attachedsensor:
-  description: |
-    This endpoint contains all sensors of the robot (TODO: expand on explanation).
   type:
     CollectionListResource:
-      resourceSchema: AttachedSensorResource
-      minimumParametersList: "[name]. "
+      resourcePostSchema: AttachedSensorResourcePostRequest
   /{attachedsensorpk}/:
     type:
       CollectionItemResource:
-        resourceSchema: AttachedSensorResource
+        resourceGetSchema: AttachedSensorResourceGetResponse
+        resourcePutSchema: AttachedSensorResourcePutRequest
