@@ -82,10 +82,14 @@ types:
   SceneResourceBase:
     type: BaseItemResource
     properties:
-      author?: string
+      author?:
+        type: string
+        default: ''
       keywords?:
         type: string
-        enum: ["'part,incomplete'", test]
+        enum: ['', "'part,incomplete'", test]
+        default: ''
+
   SceneResourceGetResponse:
     type: [BaseItemResourceGetResponse, SceneResourceBase]
     # In the future, can expand this section for non-mutable attributes
@@ -160,6 +164,7 @@ types:
     type: BaseItemResource
     properties:
       ikparampks?: array
+      default: []
   GraspsetResourceGetResponse:
     type: [BaseItemResourceGetResponse, GraspsetResourceBase]
   GraspsetResourcePostRequest:
@@ -202,6 +207,7 @@ types:
       type?:
         type: string
         enum: [object, robot]
+        default: object
   InstObjectResourcePutRequest:
     type: [BaseItemResourcePutRequest, RobotResourceBase]
 
@@ -224,25 +230,16 @@ resourceTypes:
             application/json:
               type: ResourceCollection
     post:
-      description: |
-        Creates a new <<resourcePathName|!singularize>> and add to <<resourcePathName>> list.
-        Request requires users to send JSON-serialized dictionary containing parameters for resource initialization.
-        Refer to the "properties" section in the schema below for necessary and/or valid parameters for intialization.
-        The following parameters are required for a minimally-defined resource: <<minimumParametersList>>
-        Returns JSON response containing updated JSON representation of <<resourcePathName>> list.
       is: [csrfToken]
       body:
         application/json:
-          type: <<resourceSchema>>
+          type: <<resourcePostSchema>>
       responses:
         201:
           body:
             application/json:
               type: ResourceCollection
     delete:
-      description: |
-        Deletes specific resource using <<resourcePathName|!singularize>>pk.
-        Note that user is not required to send any JSON-serialized dictionary and also does not receive JSON response.
       is: [csrfToken]
       responses:
         204:
@@ -250,34 +247,21 @@ resourceTypes:
   CollectionItemResource:
     is: [basicAuth]
     get:
-      description: |
-        Retrieves specific resource with <<resourcePathName|!singularize>>pk.
-        Note that list contents can be filtered based on query parameters, i.e. modifying the headers.
-        Refer to the "properties" section in the schema below for valid filters.
-        Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
-      body:
-        application/json:
-          type: <<resourceSchema>>
       responses:
         200:
           body:
             application/json:
-              type: <<resourceSchema>>
+              type: <<resourceGetSchema>>
     put:
-      description: |
-        Modifies specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
-        Request requires users to send JSON-serialized dictionary containing parameters for resource modification.
-        Refer to the "properties" section in the schema below for resource parameters that can be modified.
-        Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modification.
       is: [csrfToken]
       body:
         application/json:
-          type: <<resourceSchema>>
+          type: <<resourcePutSchema>>
       responses:
         202:
           body:
             application/json:
-              type: <<resourceSchema>>
+              type: <<resourceGetSchema>>
 
   ReadModifyOnlyItemResource:
     is: [basicAuth]
