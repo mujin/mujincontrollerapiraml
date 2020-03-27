@@ -266,34 +266,21 @@ resourceTypes:
   ReadModifyOnlyItemResource:
     is: [basicAuth]
     get:
-      description: |
-        Retrieves specific resource with <<resourcePathName|!singularize>>pk.
-        Note that list contents can be filtered based on query parameters, i.e. modifying the headers.
-        Refer to the "properties" section in the schema below for valid filters.
-        Returns JSON representation of <<resourcePathName|!singularize>>pk of requested resource.
-      body:
-        application/json:
-          type: <<resourceSchema>>
       responses:
         200:
           body:
             application/json:
-              type: <<resourceSchema>>
+              type: <<resourceGetSchema>>
     put:
-      description: |
-        Modifies specific resource <<resourcePathName|!singularize>> using <<resourcePathName|!singularize>>pk.
-        Request requires users to send JSON-serialized dictionary containing parameters for resource modification.
-        Refer to the "properties" section in the schema below for resource parameters that can be modified.
-        Returns updated JSON representation of <<resourcePathName|!singularize>>pk after modification.
       is: [csrfToken]
       body:
         application/json:
-          type: <<resourceSchema>>
+          type: <<resourcePutSchema>>
       responses:
         202:
           body:
             application/json:
-              type: <<resourceSchema>>
+              type: <<resourceGetSchema>>
 
 /systeminfo/:
   is: [basicAuth]
