@@ -63,9 +63,119 @@ types:
         description: Timestamp of last modification
       size:
         description: Size of the debug resource, hint for downloading
-  CollectionResource:
-    objects:
-      description:
+  
+  ResourceCollection:
+    properties:
+      objects:
+        description: List of resources represented by dictionaries.
+      meta:
+        description: Meta information, e.g. number of resources, etc.
+  
+  BaseItemResource:
+    properties:
+      name:
+        description: The name of the resource.
+  BaseItemResourceGetResponse:
+    properties:
+      pk:
+        description: The primary key that uniquely identifies the resource.
+  BaseItemResourcePostRequest:
+    properties:
+      reference_pk:
+        description: The primary key referencing the existing resource to be copied.
+  # BaseItemResourcePutRequest:
+
+  SceneResourceBase:
+    properties:
+      author:
+        description: The author of the .dae used to create the scene resource.
+      keywords:
+        description: Scene resource description (TODO: expand).
+  # SceneResourceGetResponse:
+  # SceneResourcePostRequest:
+  # SceneResourcePutRequest:
+
+  # ObjectResourceBase:
+  # ObjectResourceGetResponse:
+  # ObjectReosurcePutRequest:
+
+  LinkResourceBase:
+    properties:
+      parentlinkpk:
+        description: The primary key referencing the link's parent link.
+  # LinkResourceGetResponse:
+  # LinkResourcePostRequest:
+  # LinkResourcePutRequest:
+
+  # AttachmentResourceBase:
+  # AttachmentResourceGetResponse:
+  # AttachmentResourcePostRequest:
+  # AttachmentResourcePutRequest:
+
+  GeometryResourceBase:
+    properties:
+      geomtype:
+        description: The geometry type of the component, e.g. box, sphere, mesh.
+      diffusecolor:
+        description: The color of the component geometry.
+  # GeometryResourceGetResponse:
+  # GeometryResourcePostRequest:
+  # GeometryResourcePutRequest:
+
+  # IkParamResourceBase:
+  # IkParamResourceGetResponse:
+  # IkParamResourcePostRequest:
+  # IkParamResourceGetRequest:
+
+  GraspsetResourceBase:
+    properties:
+      ikparampks:
+        description: Array of primary keys referencing IK parameter resources that defines the graspset.
+  # GraspsetResourceGetResponse:
+  # GraspsetResourcePostRequest:
+  # GraspsetResourcePutRequest:
+
+  # RobotResourceBase:
+  # RobotResourceGetResponse:
+  # RobotResourcePostRequest:
+
+  # ToolResourceBase:
+  # ToolResourceGetResponse:
+  # ToolResourcePostRequest:
+  # ToolResourcePutRequest:
+
+  # AttachedSensorResourceBase:
+  # AttachedSensorResourceGetResponse:
+  # AttachedSensorResourcePostRequest:
+  # AttachedSensorResourcePutRequest:
+
+  # InstObjectResourceBase:
+  # InstObjectResourceGetResponse:
+  InstObjectResourcePostRequest:
+    properties:
+      type:
+        description: Type of the instance object, e.g. 'object' for workpieces, etc. and 'robot' for robots.
+  # InstObjectResourcePutRequest:
+
+  # InstObjectResourceToolBase:
+  # InstObjectResourceToolGetResponse:
+  # InstObjectResourceToolPostRequest:
+  # InstObjectResourceToolPutRequest:
+
+resourceTypes:
+  CollectionListResource:
+    get:
+      description: Retrieves a list of resources from the endpoint. List contents can be filtered based on query parameters.
+    post:
+      description: Creates and adds new resource to the endpoint based on user-sent JSON-serialized dictionary containing parameters for resource initialization.
+    delete:
+      description: Deletes specific resource at the endpoint based on user-specified resource pk.
+
+  CollectionItemResource:
+    get:
+      description: Retrieves resource based on user-specified resource pk.
+    put:
+      description: Modifies resource based on user-specified resource pk and user-sent JSON-serialized dictionary containing parameters for resource modification.
 
 /systeminfo/:
   displayName: System information
