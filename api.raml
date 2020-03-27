@@ -43,37 +43,172 @@ types:
       downloadUri: string
       datemodified: string
       size: integer
-  CollectionResource: !include ./schemas/collection.schema
-  SceneResource: !include ./schemas/scene.schema
-  ObjectResource: !include ./schemas/object.schema
-  LinkResource: !include ./schemas/link.schema
-  AttachmentResource: !include ./schemas/attachment.schema
-  GeometryResource: !include ./schemas/geometry.schema
-  IkParamResource: !include ./schemas/ikparam.schema
-  GraspsetResource: !include ./schemas/graspset.schema
-  RobotResource: !include ./schemas/robot.schema
-  ToolResource: !include ./schemas/tool.schema
-  AttachedSensorResource: !include ./schemas/attachedsensor.schema
-  InstObjectResource: !include ./schemas/instobject.schema
-  InstObjectToolResource: !include ./schemas/instobjecttool.schema
+
+  # For type-checking and content validation for list of resources.
+  ResourceCollection:
+    type: object
+    properties:
+      objects: array
+      meta: object
+
+  # IMPORTANT:
+  # ExampleResource*Base schema (type) is used for ExampleResource*Request and ExamplesResource*Response type inheritance.
+  # ExampleResource*Request schema (type) is (ONLY) used for POST documentation.
+  # ExampleResource*Response schema (type) is used for typing and content validation for specific resources.
+
+  BaseItemResource:
+    type: object
+    properties:
+      name: string
+  BaseItemResourceRequest:
+    type: BaseItemResource
+    properties:
+      reference_pk?: string
+  BaseItemResourceResponse:
+    type: BaseItemResource
+    properties:
+      pk: string
+  
+  SceneResourceBase:
+    type: BaseItemResource
+    properties:
+      author?: string
+      keywords?:
+        type: string
+        enum: ["'part,incomplete'", test]
+  SceneResourceRequest:
+    type: [BaseItemResourceRequest, SceneResourceBase]
+    # In the future, can expand this section for POST-specific, scene-specific attributes
+  SceneResourceResponse:
+    type: [BaseItemResourceResponse, SceneResourceBase]
+    # In the future, can expand this section for non-mutable attributes
+
+  ObjectResourceBase:
+    type: BaseItemResource
+    # In the future, can expand this section to define common attributes for object template
+  ObjectResourceRequest:
+    type: [BaseItemResourceRequest, ObjectResourceBase]
+    # In the future, can expand this section for POST-specific, object-specific attributes
+  ObjectResourceResponse:
+    type: [BaseItemResponseResponse, ObjectResourceBase]
+    # In the future, can expand this section for non-mutable attributes
+
+  LinkResourceBase:
+    type: BaseItemResource
+    properties:
+      parentlinkpk?: string
+    # In the future, can expand this section to define common attributes for links 
+  LinkResourceRequest:
+    type: [BaseItemResourceRequest, LinkResourceBase]
+    properties:
+      parentlinkpk:
+        required: true
+    # In the future, can expand this section for POST-specific, link-specific attributes
+  LinkResourceResponse:
+    type: [BaseItemResourceResponse, LinkResourceBase]
+    # In the future, can expand this section for non-mutable attributes
+
+  AttachmentResourceBase:
+    type: BaseItemResource
+    # In the future, can expand this section to define common attributes for attachments   
+  AttachmentResourceRequest:
+    type: [BaseItemResourceRequest, AttachmentResourceBase]
+    # In the future, can expand this section to define POST-specific, attachment-specific attributes
+  AttachmentResourceResponse:
+    type: [BaseItemResourceResponse, AttachmentResourceBase]
+    # In the future, can expand this section for non-mutable attributes
+
+  GeometryResourceBase:
+    type: BaseItemResource
+    properties:
+      linkpk?: string
+      geomtype?:
+        type: string
+        enum: [box, sphere]
+      diffusecolor?:
+        type: array
+        example: [1, 1, 0, 1]
+    # In the future, can expand this section to define common attributes for geometries
+  GeometryResourceBaseRequest:
+    type: [BaseItemResourceRequest, GeometryResourceBase]
+    properties:
+      linkpk:
+        required: true
+      geomtype:
+        required: true
+    # In the future, can expand this section to define POST-specific, geometry-specific attributes
+  GeometryResourceBaseResponse:
+    diffusecolor: array
+    type: [BaseItemResourceResponse, GeometryResourceBase]
+
+  IkParamResourceBase:
+    type: BaseItemResource
+    # In the future, can expand this section to define common attributes for ikparam
+  IkParamResourceRequest:
+    type: [BaseItemResource, IkParamResourceBase]
+    # In the future, can expand this section to define POST-specific, ikparam-specific attributes
+  IkParamResourceResponse:
+    type: [BaseItemResource, IkParamResourceBase]
+
+  GraspsetResourceBase:
+    type: BaseItemResource
+    properties:
+      ikparampks?: array
+    # In the future, can expand this section to define common attributes for graspset
+  GraspsetResourceRequest:
+    type: [BaseItemResource, GraspsetResourceBase]
+    # In the future, can expand this section to define POST-specific, graspset-specific attributes
+  GraspsetResourceResponse:
+    type: [BaseItemResource, GraspsetResourceBase]
+  
+  RobotResourceBase:
+    type: BaseItemResource      
+  RobotResourceRequest:
+    type: [BaseItemResource, RobotResourceBase]
+  RobotResourceResponse:
+    type: [BaseItemResource, RobotResourceBase]
+
+  ToolResourceBase:
+    type: BaseItemResource
+  ToolResourceRequest:
+    type: [BaseItemResource, RobotResourceBase]
+  ToolResourceResponse:
+    type: [BaseItemResource, RobotResourceBase]
+
+  AttachedSensorResourceBase:
+    type: BaseItemResource
+  AttachedSensorResourceRequest:
+    type: [BaseItemResource, RobotResourceBase]
+  AttachedSensorResourceResponse:
+    type: [BaseItemResource, RobotResourceBase]
+
+  InstObjectResourceBase:
+    type: BaseItemResource
+  InstObjectResourceRequest:
+    type: [BaseItemResource, RobotResourceBase]
+    properties:
+      type?:
+        type: string
+        enum: [object, robot]
+  InstObjectResourceResponse:
+    type: [BaseItemResource, RobotResourceBase]
+
+  InstObjectResourceToolBase:
+    type: BaseItemResource
+  InstObjectResourceToolRequest:
+    type: [BaseItemResource, RobotResourceBase]
+  InstObjectResourceToolResponse:
+    type: [BaseItemResource, RobotResourceBase]
 
 resourceTypes:
   CollectionListResource:
     is: [basicAuth]
     get:
-      description: |
-        Retrieves <<resourcePathName>> list.
-        Note that list contents can be filtered based on query parameters, i.e. modifying the header "fields" value.
-        Refer to the "properties" section in the schema below for valid filters.
-        Returns JSON response containing resource list.
-      body:
-        application/json:
-          type: <<resourceSchema>>
       responses:
         200:
           body:
             application/json:
-              type: CollectionResource
+              type: ResourceCollection
     post:
       description: |
         Creates a new <<resourcePathName|!singularize>> and add to <<resourcePathName>> list.
@@ -89,7 +224,7 @@ resourceTypes:
         201:
           body:
             application/json:
-              type: CollectionResource
+              type: ResourceCollection
     delete:
       description: |
         Deletes specific resource using <<resourcePathName|!singularize>>pk.
@@ -656,17 +791,15 @@ resourceTypes:
         204:
 
 /api/v1/scene:
-  description: |
-    This endpoint contains the scene that holds the robot(s), the source and destination containers, and the workpiece(s).
   /:
     type:
       CollectionListResource:
-        resourceSchema: SceneResource
+        resourceSchema: SceneResourceResponse
         minimumParametersList: "[name]. "
   /{scenepk}/:
     type:
       CollectionItemResource:
-        resourceSchema: SceneResource
+        resourceSchema: SceneResourceResponse
 
 /api/v1/scene/{scenepk}/instobject:
   description: |
