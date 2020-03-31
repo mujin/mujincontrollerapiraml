@@ -237,7 +237,7 @@ types:
     type: [BaseItemResourcePuRequest, InstObjectToolResourceBase]
 
 resourceTypes:
-  CollectionListResource:
+  CollectionResource:
     is: [basicAuth]
     get:
       responses:
@@ -794,7 +794,7 @@ resourceTypes:
 /api/v1/scene:
   /:
     type:
-      CollectionListResource:
+      CollectionResource:
         resourceCollectionSchema: ResourceCollection
         resourcePostSchema: SceneResourcePostRequest
   /{scenepk}/:
@@ -805,7 +805,7 @@ resourceTypes:
 
 /api/v1/scene/{scenepk}/instobject:
   type:
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: InstObjectResourcePostRequest
   /{instobjectpk}/:
@@ -816,7 +816,7 @@ resourceTypes:
 
 /api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
   type:
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: InstObjectToolResourcePostRequest
   /{toolpk}/:
@@ -833,7 +833,7 @@ resourceTypes:
 
 /api/v1/object/{objectpk}/link:
   type:
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: LinkResourcePostRequest
   /{linkpk}/:
@@ -844,7 +844,7 @@ resourceTypes:
 
 /api/v1/object/{objectpk}/attachment:
   type:
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: AttachmentResourcePostRequest
   /{attachmentpk}/:
@@ -855,7 +855,7 @@ resourceTypes:
 
 /api/v1/object/{objectpk}/geometry:
   type:
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: GeometryResourcePostRequest
   /{geometrypk}/:
@@ -866,7 +866,7 @@ resourceTypes:
     
 /api/v1/object/{objectpk}/ikparam:
   type: 
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: IkParamResourcePostRequest
   /{ikparampk}/:
@@ -877,7 +877,7 @@ resourceTypes:
 
 /api/v1/object/{objectpk}/graspset:
   type:
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: GraspsetResourcePostRequest
   /{graspsetpk}/:
@@ -894,7 +894,7 @@ resourceTypes:
     
 /api/v1/robot/{robotpk}/tool:
   type:
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: ToolResourcePostRequest
   /{toolpk}/:
@@ -905,7 +905,7 @@ resourceTypes:
 
 /api/v1/robot/{robotpk}/attachedsensor:
   type:
-    CollectionListResource:
+    CollectionResource:
       resourceCollectionSchema: ResourceCollection
       resourcePostSchema: AttachedSensorResourcePostRequest
   /{attachedsensorpk}/:
