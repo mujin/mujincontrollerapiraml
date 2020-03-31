@@ -45,8 +45,9 @@ types:
       size: integer
 
   # For type-checking and content validation for list of resources.
-  ResourceCollection:
+  ResourceCollectionGetResponse:
     type: object
+    additionalProperties: false
     properties:
       objects: array
       meta: object
@@ -60,6 +61,7 @@ types:
 
   BaseItemResource:
     type: object
+    additionalProperties: false
     properties:
       name:
         type: string
@@ -244,7 +246,7 @@ resourceTypes:
         200:
           body:
             application/json:
-              type: <<resourceCollectionSchema>>
+              type: <<resourceCollectionGetSchema>>
     post:
       is: [csrfToken]
       body:
@@ -254,13 +256,13 @@ resourceTypes:
         201:
           body:
             application/json:
-              type: <<resourceCollectionSchema>>
+              type: <<resourceCollectionGetSchema>>
     delete:
       is: [csrfToken]
       responses:
         204:
 
-  CollectionItemResource:
+  ItemResource:
     is: [basicAuth]
     get:
       responses:
@@ -795,121 +797,132 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionSchema: ResourceCollection
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: SceneResourcePostRequest
   /{scenepk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: SceneResourceGetResponse
         resourcePutSchema: SceneResourcePutRequest
 
 /api/v1/scene/{scenepk}/instobject:
-  type:
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: InstObjectResourcePostRequest
+  /:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: InstObjectResourcePostRequest
   /{instobjectpk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: InstObjectResourceGetResponse
         resourcePutSchema: InstObjectResourcePutRequest
 
 /api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
-  type:
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: InstObjectToolResourcePostRequest
+  /:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: InstObjectToolResourcePostRequest
   /{toolpk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: InstObjectToolResourceGetResponse
         resourcePutSchema: InstObjectToolResourcePutRequest
 
 /api/v1/object/{objectpk}:
-  type:
-    ReadModifyOnlyItemResource:
-      resourceGetSchema: ObjectResourceGetResponse
-      resourcePutSchema: ObjectResourcePutRequest
+  /:
+    type:
+      ReadModifyOnlyItemResource:
+        resourceGetSchema: ObjectResourceGetResponse
+        resourcePutSchema: ObjectResourcePutRequest
 
 /api/v1/object/{objectpk}/link:
-  type:
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: LinkResourcePostRequest
+  /:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: LinkResourcePostRequest
   /{linkpk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: LinkResourceGetResponse
         resourcePutSchema: LinkResourcePutRequest
 
 /api/v1/object/{objectpk}/attachment:
-  type:
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: AttachmentResourcePostRequest
+  /:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: AttachmentResourcePostRequest
   /{attachmentpk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: AttachmentResourceGetResponse
         resourcePutSchema: AttachmentResourcePutRequest
 
 /api/v1/object/{objectpk}/geometry:
-  type:
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: GeometryResourcePostRequest
+  /:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: GeometryResourcePostRequest
   /{geometrypk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: GeometryResourceGetResponse
         resourcePutSchema: GeometryResourcePutRequest
     
 /api/v1/object/{objectpk}/ikparam:
-  type: 
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: IkParamResourcePostRequest
+  /:
+    type: 
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: IkParamResourcePostRequest
   /{ikparampk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: IkParamResourceGetResponse
         resourcePutSchema: IkParamResourcePutRequest
 
 /api/v1/object/{objectpk}/graspset:
-  type:
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: GraspsetResourcePostRequest
+  /:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: GraspsetResourcePostRequest
   /{graspsetpk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: GraspsetResourceGetResponse
         resourcePutSchema: GraspsetResourcePutRequest
     
 /api/v1/robot/{robotpk}/:
-  type:
-    ReadModifyOnlyItemResource:
-      resourceGetSchema: RobotResourceGetResponse
-      resourcePutSchema: RobotResourcePutRequest
+  /:
+    type:
+      ReadModifyOnlyItemResource:
+        resourceGetSchema: RobotResourceGetResponse
+        resourcePutSchema: RobotResourcePutRequest
     
 /api/v1/robot/{robotpk}/tool:
-  type:
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: ToolResourcePostRequest
+  /:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: ToolResourcePostRequest
   /{toolpk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: ToolResourceGetResponse
         resourcePutSchema: ToolResourcePutRequest
 
 /api/v1/robot/{robotpk}/attachedsensor:
-  type:
-    CollectionResource:
-      resourceCollectionSchema: ResourceCollection
-      resourcePostSchema: AttachedSensorResourcePostRequest
+  /:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourcePostSchema: AttachedSensorResourcePostRequest
   /{attachedsensorpk}/:
     type:
-      CollectionItemResource:
+      ItemResource:
         resourceGetSchema: AttachedSensorResourceGetResponse
         resourcePutSchema: AttachedSensorResourcePutRequest
