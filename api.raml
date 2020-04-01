@@ -61,7 +61,20 @@ types:
   # ExampleResource*GetResponse schema (type) is used for typing and content validation for specific resources.
   # ExampleResource*PostRequest schema (type) is (ONLY) used for POST documentation.
   # ExampleResource*PutRequest schema (type) is (ONLY) used for PUT documentation.
-  # Make attributes required = false by default (in base resource) due to filtering (and because not many attributes have to be manually set to true for minimally defined resource objects)
+  # Make attributes required = false by default (in base resource) due to filtering
+
+  # Some *unusual* behavior (bugs?) of RAML (as of April 1, 2019):
+  # 1.  If inheriting from multiple types, if the first inherited type (first in inheritance list, i.e. at index 0) has a required property set to True and the second
+  #     inherited type (second in inheritance list, i.e. at index 1) has the same property but set to False, validation works, and the property will be required.
+  #     However, if the inheritance order is switched, will cause validation error due to definition conflict (because same property has different requirements).
+  #     
+  #     Therefore, to work around the problem, if defining new type inheriting from multiple types and parent types have same property but different 'require' 
+  #     definitions, set parent type with required property(ies) as first inherited type.
+  #
+  #     Additional note(s):
+  #     1. Current parser implementation gives higher priority to first inherited type. If second inherited type shares the same property as first inherited type,
+  #        first inherited property characteritics will be given precedence
+  #
 
   BaseItemResource:
     type: object
