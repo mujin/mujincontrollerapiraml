@@ -49,8 +49,12 @@ types:
     type: object
     additionalProperties: false
     properties:
-      objects: array
-      meta: object
+      objects: 
+        type: array
+        required: true
+      meta:
+        type: object
+        required: true
 
   # IMPORTANT:
   # ExampleResource*Base schema (type) is used for ExampleResource*Request and ExamplesResource*Response type inheritance.
@@ -67,14 +71,14 @@ types:
         type: string
         required: false
     # Expand this section for all common attributes shared by all resources and all GET, POST, and PUT methods
-  BaseItemResourceGeResponse:
+  BaseItemResourceGetResponse:
     type: BaseItemResource
     properties:
       pk:
         type: string
         required: false
     # Expand this section for all (non-mutable) attributes shared by all resources for GET methods
-  BaseItemResourcePosRequest:
+  BaseItemResourcePostRequest:
     type: BaseItemResource
     properties:
       name:
@@ -83,7 +87,7 @@ types:
         type: string
         required: false
     # Expand this section for all attributes shared by all resources for POST methods
-  BaseItemResourcePuRequest:
+  BaseItemResourcePutRequest:
     type: BaseItemResource
     # This section is for all attributes shared by all resources for PUT methods
   
@@ -92,28 +96,33 @@ types:
     properties:
       author:
         type: string
-        default: ''
         required: false
       keywords:
         type: string
-        enum: ['', "'part,incomplete'", test]
-        default: ''
+        enum: ["''", "'part,incomplete'", test]
         required: false
   SceneResourceGetResponse:
-    type: [BaseItemResourceGeResponse, SceneResourceBase]
+    type: [BaseItemResourceGetResponse, SceneResourceBase]
     # In the future, can expand this section for non-mutable attributes
   SceneResourcePostRequest:
-    type: [BaseItemResourcePosRequest, SceneResourceBase]
+    type: [BaseItemResourcePostRequest, SceneResourceBase]
+    properties:
+      author:
+        default: "''"
+        required: false
+      keywords:
+        default: "''"
+        required: false
     # In the future, can expand this section for POST-specific, scene-specific attributes
   SceneResourcePutRequest:
-    type: [BaseItemResourcePuRequest, SceneResourceBase]
+    type: [BaseItemResourcePutRequest, SceneResourceBase]
 
   ObjectResourceBase:
     type: BaseItemResource
   ObjectResourceGetResponse:
-    type: [BaseItemResourceGeResponse, ObjectResourceBase]
+    type: [BaseItemResourceGetResponse, ObjectResourceBase]
   ObjectResourcePutRequest:
-    type: [BaseItemResourcePuRequest, ObjectResourceBase]
+    type: [BaseItemResourcePutRequest, ObjectResourceBase]
 
   LinkResourceBase:
     type: BaseItemResource
@@ -122,23 +131,23 @@ types:
         type: string
         required: false
   LinkResourceGetResponse:
-    type: [BaseItemResourceGeResponse, LinkResourceBase]
+    type: [BaseItemResourceGetResponse, LinkResourceBase]
   LinkResourcePostRequest:
-    type: [BaseItemResourcePosRequest, LinkResourceBase]
+    type: [BaseItemResourcePostRequest, LinkResourceBase]
     properties:
       parentlinkpk:
         required: true
   LinkResourcePutRequest:
-    type: [BaseItemResourcePuRequest, LinkResourceBase]
+    type: [BaseItemResourcePutRequest, LinkResourceBase]
 
   AttachmentResourceBase:
     type: BaseItemResource
   AttachmentResourceGetResponse:
-    type: [BaseItemResourceGeResponse, AttachmentResourceBase]
+    type: [BaseItemResourceGetResponse, AttachmentResourceBase]
   AttachmentResourcePostRequest:
-    type: [BaseItemResourcePosRequest, AttachmentResourceBase]
+    type: [BaseItemResourcePostRequest, AttachmentResourceBase]
   AttachmentResourcePutRequest:
-    type: [BaseItemResourcePuRequest, AttachmentResourceBase]
+    type: [BaseItemResourcePutRequest, AttachmentResourceBase]
 
   GeometryResourceBase:
     type: BaseItemResource
@@ -151,75 +160,74 @@ types:
         enum: [box, sphere]
         required: false
       diffusecolor:
-        type: array
+        type: integer[]
         example: [1, 1, 0, 1]
         required: false
   GeometryResourceGetResponse:
-    type: [BaseItemResourceGeResponse, GeometryResourceBase]
+    type: [BaseItemResourceGetResponse, GeometryResourceBase]
   GeometryResourcePostRequest:
-    type: [BaseItemResourcePosRequest, GeometryResourceBase]
+    type: [BaseItemResourcePostRequest, GeometryResourceBase]
     properties:
       linkpk:
         required: true
       geomtype:
         required: true
   GeometryResourcePutRequest:
-    type: [BaseItemResourcePuRequest, GeometryResourceBase]
+    type: [BaseItemResourcePutRequest, GeometryResourceBase]
 
   IkParamResourceBase:
     type: BaseItemResource
   IkParamResourceGetResponse:
-    type: [BaseItemResourceGeResponse, IkParamResourceBase]
+    type: [BaseItemResourceGetResponse, IkParamResourceBase]
   IkParamResourcePostRequest:
-    type: [BaseItemResourcePosRequest, IkParamResourceBase]
+    type: [BaseItemResourcePostRequest, IkParamResourceBase]
   IkParamResourcePutRequest:
-    type: [BaseItemResourcePuRequest, IkParamResourceBase]
+    type: [BaseItemResourcePutRequest, IkParamResourceBase]
 
   GraspsetResourceBase:
     type: BaseItemResource
     properties:
       ikparampks:
-        type: array
-        default: []
+        type: string[]
         required: false
   GraspsetResourceGetResponse:
-    type: [BaseItemResourceGeResponse, GraspsetResourceBase]
+    type: [BaseItemResourceGetResponse, GraspsetResourceBase]
   GraspsetResourcePostRequest:
-    type: [BaseItemResourcePosRequest, GraspsetResourceBase]
+    type: [BaseItemResourcePostRequest, GraspsetResourceBase]
   GraspsetResourcePutRequest:
-    type: [BaseItemResourcePuRequest, GraspsetResourceBase]
+    type: [BaseItemResourcePutRequest, GraspsetResourceBase]
   
   RobotResourceBase:
     type: ObjectResourceBase      
   RobotResourceGetResponse:
-    type: [BaseItemResourceGeResponse, RobotResourceBase]
+    type: [BaseItemResourceGetResponse, RobotResourceBase]
   RobotResourcePutRequest:
-    type: [BaseItemResourcePuRequest, RobotResourceBase]
+    type: [BaseItemResourcePutRequest, RobotResourceBase]
 
   ToolResourceBase:
     type: BaseItemResource
   ToolResourceGetResponse:
-    type: [BaseItemResourceGeResponse, ToolResourceBase]
+    type: [BaseItemResourceGetResponse, ToolResourceBase]
   ToolResourcePostRequest:
-    type: [BaseItemResourcePosRequest, ToolResourceBase]
+    type: [BaseItemResourcePostRequest, ToolResourceBase]
   ToolResourcePutRequest:
-    type: [BaseItemResourcePuRequest, ToolResourceBase]
+    type: [BaseItemResourcePutRequest, ToolResourceBase]
 
   AttachedSensorResourceBase:
     type: BaseItemResource
   AttachedSensorResourceGetResponse:
-    type: [BaseItemResourceGeResponse, AttachedSensorResourceBase]
+    type: [BaseItemResourceGetResponse, AttachedSensorResourceBase]
   AttachedSensorResourcePostRequest:
-    type: [BaseItemResourcePosRequest, AttachedSensorResourceBase]
+    type: [BaseItemResourcePostRequest, AttachedSensorResourceBase]
   AttachedSensorResourcePutRequest:
-    type: [BaseItemResourcePuRequest, AttachedSensorResourceBase]
+    type: [BaseItemResourcePutRequest, AttachedSensorResourceBase]
 
   InstObjectResourceBase:
     type: BaseItemResource
   InstObjectResourceGetResponse:
-    type: [BaseItemResourceGeResponse, InstObjectResourceBase]
+    type: [BaseItemResourceGetResponse, InstObjectResourceBase]
   InstObjectResourcePostRequest:
-    type: [BaseItemResourcePosRequest, InstObjectResourceBase]
+    type: [BaseItemResourcePostRequest, InstObjectResourceBase]
     properties:
       type:
         type: string
@@ -227,16 +235,16 @@ types:
         default: object
         required: false
   InstObjectResourcePutRequest:
-    type: [BaseItemResourcePuRequest, InstObjectResourceBase]
+    type: [BaseItemResourcePutRequest, InstObjectResourceBase]
 
   InstObjectToolResourceBase:
     type: BaseItemResource
   InstObjectToolResourceGetResponse:
-    type: [BaseItemResourceGeResponse, InstObjectToolResourceBase]
+    type: [BaseItemResourceGetResponse, InstObjectToolResourceBase]
   InstObjectToolResourcePostRequest:
-    type: [BaseItemResourcePosRequest, InstObjectToolResourceBase]
+    type: [BaseItemResourcePostRequest, InstObjectToolResourceBase]
   InstObjectToolResourcePutRequest:
-    type: [BaseItemResourcePuRequest, InstObjectToolResourceBase]
+    type: [BaseItemResourcePutRequest, InstObjectToolResourceBase]
 
 resourceTypes:
   CollectionResource:
