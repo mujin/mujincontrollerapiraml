@@ -46,16 +46,16 @@ types:
 
   # For type-checking and content validation for list of resources.
   ResourceCollectionGetResponse:
-    $schema: http://json-schema.org/draft-03/schema
     type: object
-    additionalProperties: false
+    # additionalProperties: false # Uncomment this after robot/{robotpk}/attachedsensor and /robot/{robotpk}/tool have correct return...
+    additionalProperties: true
     properties:
       objects: 
         type: array
-        required: true
+        required: false # true # See above comment
       meta:
         type: object
-        required: true
+        required: false # true # See above comment
 
   # IMPORTANT:
   # ExampleResource*Base schema (type) is used for ExampleResource*Request and ExamplesResource*Response type inheritance.
@@ -80,7 +80,6 @@ types:
   #
 
   BaseItemResource:
-    $schema: http://json-schema.org/draft-03/schema
     type: object
     # additionalProperties: false # Uncomment this when fully defined. Otherwise, will cause schema validation errors.
     properties:
@@ -116,7 +115,7 @@ types:
         required: false
       keywords:
         type: string
-        enum: ["''", "'part,incomplete'", test]
+        enum: ['', 'part,incomplete', test]
         required: false
   SceneResourceGetResponse:
     type: [BaseItemResourceGetResponse, SceneResourceBase]
@@ -177,7 +176,7 @@ types:
         enum: [box, sphere]
         required: false
       diffusecolor:
-        type: integer[]
+        type: array
         example: [1, 1, 0, 1]
         required: false
   GeometryResourceGetResponse:
@@ -186,9 +185,9 @@ types:
     type: [BaseItemResourcePostRequest, GeometryResourceBase]
     properties:
       linkpk:
-        required: true
+        required: false # Not sure if this should be true...
       geomtype:
-        required: true
+        required: false # Not sure if this should be true...
   GeometryResourcePutRequest:
     type: [BaseItemResourcePutRequest, GeometryResourceBase]
 
@@ -205,7 +204,7 @@ types:
     type: BaseItemResource
     properties:
       ikparampks:
-        type: string[]
+        type: array
         required: false
   GraspsetResourceGetResponse:
     type: [BaseItemResourceGetResponse, GraspsetResourceBase]
@@ -857,6 +856,7 @@ resourceTypes:
         resourceGetSchema: InstObjectToolResourceGetResponse
         resourcePutSchema: InstObjectToolResourcePutRequest
 
+# DO NOT put a '/' after endpoint 
 /api/v1/object/{objectpk}:
   /:
     type:
@@ -929,7 +929,8 @@ resourceTypes:
         resourceGetSchema: GraspsetResourceGetResponse
         resourcePutSchema: GraspsetResourcePutRequest
     
-/api/v1/robot/{robotpk}/:
+# DO NOT put a '/' after endpoint 
+/api/v1/robot/{robotpk}:
   /:
     type:
       ReadModifyOnlyItemResource:
