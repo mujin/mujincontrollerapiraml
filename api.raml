@@ -46,6 +46,7 @@ types:
 
   # For type-checking and content validation for list of resources.
   ResourceCollectionGetResponse:
+    $schema: http://json-schema.org/draft-03/schema
     type: object
     additionalProperties: false
     properties:
@@ -63,6 +64,8 @@ types:
   # ExampleResource*PutRequest schema (type) is (ONLY) used for PUT documentation.
   # Make attributes required = false by default (in base resource) due to filtering
 
+  # JSON schema version must be http://json-schema.org/draft-03/schema
+
   # Some *unusual* behavior (bugs?) of RAML (as of April 1, 2019):
   # 1.  If inheriting from multiple types, if the first inherited type (first in inheritance list, i.e. at index 0) has a required property set to True and the second
   #     inherited type (second in inheritance list, i.e. at index 1) has the same property but set to False, validation works, and the property will be required.
@@ -77,8 +80,9 @@ types:
   #
 
   BaseItemResource:
+    $schema: http://json-schema.org/draft-03/schema
     type: object
-    additionalProperties: false
+    # additionalProperties: false # Uncomment this when fully defined. Otherwise, will cause schema validation errors.
     properties:
       name:
         type: string
@@ -277,7 +281,7 @@ resourceTypes:
         201:
           body:
             application/json:
-              type: <<resourceCollectionGetSchema>>
+              type: <<resourceGetSchema>>
     delete:
       is: [csrfToken]
       responses:
@@ -820,6 +824,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: SceneResourcePostRequest
+        resourceGetSchema: SceneResourceGetResponse
   /{scenepk}/:
     type:
       ItemResource:
@@ -832,6 +837,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: InstObjectResourcePostRequest
+        resourceGetSchema: InstObjectResourceGetResponse
   /{instobjectpk}/:
     type:
       ItemResource:
@@ -844,6 +850,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: InstObjectToolResourcePostRequest
+        resourceGetSchema: InstObjectToolResourceGetResponse
   /{toolpk}/:
     type:
       ItemResource:
@@ -863,6 +870,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: LinkResourcePostRequest
+        resourceGetSchema: LinkResourceGetResponse
   /{linkpk}/:
     type:
       ItemResource:
@@ -875,6 +883,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: AttachmentResourcePostRequest
+        resourceGetSchema: AttachmentResourceGetResponse
   /{attachmentpk}/:
     type:
       ItemResource:
@@ -887,6 +896,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: GeometryResourcePostRequest
+        resourceGetSchema: GeometryResourceGetResponse
   /{geometrypk}/:
     type:
       ItemResource:
@@ -899,6 +909,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: IkParamResourcePostRequest
+        resourceGetSchema: IkParamResourceGetResponse
   /{ikparampk}/:
     type:
       ItemResource:
@@ -911,6 +922,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: GraspsetResourcePostRequest
+        resourceGetSchema: GraspsetResourceGetResponse
   /{graspsetpk}/:
     type:
       ItemResource:
@@ -930,6 +942,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: ToolResourcePostRequest
+        resourceGetSchema: ToolResourceGetResponse
   /{toolpk}/:
     type:
       ItemResource:
@@ -942,6 +955,7 @@ resourceTypes:
       CollectionResource:
         resourceCollectionGetSchema: ResourceCollectionGetResponse
         resourcePostSchema: AttachedSensorResourcePostRequest
+        resourceGetSchema: AttachedSensorResourceGetResponse
   /{attachedsensorpk}/:
     type:
       ItemResource:
