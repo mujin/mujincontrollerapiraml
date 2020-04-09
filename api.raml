@@ -237,7 +237,7 @@ types:
     type: [BaseItemResourcePostRequest, GraspsetResourceBase]
   GraspsetResourcePutRequest:
     type: [BaseItemResourcePutRequest, GraspsetResourceBase]
-  GrapsetResourceCollectionGetResponse:
+  GraspsetResourceCollectionGetResponse:
     type: ResourceCollectionGetResponse
     properties:
       objects:
@@ -970,7 +970,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: GraspResourceCollectionGetResponse
+        resourceCollectionGetSchema: GraspsetResourceCollectionGetResponse
         resourcePostSchema: GraspsetResourcePostRequest
         resourceGetSchema: GraspsetResourceGetResponse
   /{graspsetpk}/:
