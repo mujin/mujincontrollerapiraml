@@ -44,19 +44,6 @@ types:
       datemodified: string
       size: integer
 
-  # For type-checking and content validation for list of resources.
-  ResourceCollectionGetResponse:
-    type: object
-    # additionalProperties: false # Uncomment this after robot/{robotpk}/attachedsensor and /robot/{robotpk}/tool have correct return...
-    additionalProperties: true
-    properties:
-      objects: 
-        type: array
-        required: false # true # See above comment
-      meta:
-        type: object
-        required: false # true # See above comment
-
   # IMPORTANT:
   # ExampleResource*Base schema (type) is used for ExampleResource*Request and ExamplesResource*Response type inheritance.
   # ExampleResource*GetResponse schema (type) is used for typing and content validation for specific resources.
@@ -106,6 +93,19 @@ types:
   BaseItemResourcePutRequest:
     type: BaseItemResource
     # This section is for all attributes shared by all resources for PUT methods
+
+# For type-checking and content validation for list of resources.
+  ResourceCollectionGetResponse:
+    type: object
+    # additionalProperties: false # Uncomment this after robot/{robotpk}/attachedsensor and /robot/{robotpk}/tool have correct return...
+    additionalProperties: true
+    properties:
+      objects: 
+        type: array
+        required: false # true # See above comment
+      meta:
+        type: object
+        required: false # true # See above comment
   
   SceneResourceBase:
     type: BaseItemResource
@@ -132,6 +132,11 @@ types:
     # In the future, can expand this section for POST-specific, scene-specific attributes
   SceneResourcePutRequest:
     type: [BaseItemResourcePutRequest, SceneResourceBase]
+  SceneResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: SceneResourceGetResponse[]
 
   ObjectResourceBase:
     type: BaseItemResource
@@ -155,6 +160,11 @@ types:
         required: true
   LinkResourcePutRequest:
     type: [BaseItemResourcePutRequest, LinkResourceBase]
+  LinkResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: LinkResourceGetResponse[]
 
   AttachmentResourceBase:
     type: BaseItemResource
@@ -164,6 +174,11 @@ types:
     type: [BaseItemResourcePostRequest, AttachmentResourceBase]
   AttachmentResourcePutRequest:
     type: [BaseItemResourcePutRequest, AttachmentResourceBase]
+  AttachmentResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: AttachmentResourceGetResponse[]
 
   GeometryResourceBase:
     type: BaseItemResource
@@ -190,6 +205,11 @@ types:
         required: false # Not sure if this should be true...
   GeometryResourcePutRequest:
     type: [BaseItemResourcePutRequest, GeometryResourceBase]
+  GeometryResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: GeometryResourceGetResponse[]
 
   IkParamResourceBase:
     type: BaseItemResource
@@ -199,6 +219,11 @@ types:
     type: [BaseItemResourcePostRequest, IkParamResourceBase]
   IkParamResourcePutRequest:
     type: [BaseItemResourcePutRequest, IkParamResourceBase]
+  IkParamResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: IkParamResourceGetResponse[]
 
   GraspsetResourceBase:
     type: BaseItemResource
@@ -212,6 +237,11 @@ types:
     type: [BaseItemResourcePostRequest, GraspsetResourceBase]
   GraspsetResourcePutRequest:
     type: [BaseItemResourcePutRequest, GraspsetResourceBase]
+  GrapsetResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: GraspsetResourceGetResponse[]
   
   RobotResourceBase:
     type: ObjectResourceBase      
@@ -228,6 +258,11 @@ types:
     type: [BaseItemResourcePostRequest, ToolResourceBase]
   ToolResourcePutRequest:
     type: [BaseItemResourcePutRequest, ToolResourceBase]
+  ToolResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: ToolResourceGetResponse[]
 
   AttachedSensorResourceBase:
     type: BaseItemResource
@@ -237,6 +272,11 @@ types:
     type: [BaseItemResourcePostRequest, AttachedSensorResourceBase]
   AttachedSensorResourcePutRequest:
     type: [BaseItemResourcePutRequest, AttachedSensorResourceBase]
+  AttachedSensorResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: AttachedSensorResourceGetResponse[]
 
   InstObjectResourceBase:
     type: BaseItemResource
@@ -252,6 +292,11 @@ types:
         required: false
   InstObjectResourcePutRequest:
     type: [BaseItemResourcePutRequest, InstObjectResourceBase]
+  InstObjectResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: InstObjectResourceGetResponse[]
 
   InstObjectToolResourceBase:
     type: BaseItemResource
@@ -261,6 +306,11 @@ types:
     type: [BaseItemResourcePostRequest, InstObjectToolResourceBase]
   InstObjectToolResourcePutRequest:
     type: [BaseItemResourcePutRequest, InstObjectToolResourceBase]
+  InstObjectToolResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: InstObjectToolResourceGetResponse[]
 
 resourceTypes:
   CollectionResource:
@@ -821,7 +871,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: SceneResourceCollectionGetResponse
         resourcePostSchema: SceneResourcePostRequest
         resourceGetSchema: SceneResourceGetResponse
   /{scenepk}/:
@@ -834,7 +884,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: InstObjectResourceCollectionGetResponse
         resourcePostSchema: InstObjectResourcePostRequest
         resourceGetSchema: InstObjectResourceGetResponse
   /{instobjectpk}/:
@@ -847,7 +897,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: InstObjectToolResourceCollectionGetResponse
         resourcePostSchema: InstObjectToolResourcePostRequest
         resourceGetSchema: InstObjectToolResourceGetResponse
   /{toolpk}/:
@@ -868,7 +918,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: LinkResourceCollectionGetResponse
         resourcePostSchema: LinkResourcePostRequest
         resourceGetSchema: LinkResourceGetResponse
   /{linkpk}/:
@@ -881,7 +931,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: AttachmentResourceCollectionGetResponse
         resourcePostSchema: AttachmentResourcePostRequest
         resourceGetSchema: AttachmentResourceGetResponse
   /{attachmentpk}/:
@@ -894,7 +944,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: GeometryResourceCollectionGetResponse
         resourcePostSchema: GeometryResourcePostRequest
         resourceGetSchema: GeometryResourceGetResponse
   /{geometrypk}/:
@@ -907,7 +957,7 @@ resourceTypes:
   /:
     type: 
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: IkParamResourceCollectionGetResponse
         resourcePostSchema: IkParamResourcePostRequest
         resourceGetSchema: IkParamResourceGetResponse
   /{ikparampk}/:
@@ -920,7 +970,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: GraspResourceCollectionGetResponse
         resourcePostSchema: GraspsetResourcePostRequest
         resourceGetSchema: GraspsetResourceGetResponse
   /{graspsetpk}/:
@@ -941,7 +991,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: ToolResourceCollectionGetResponse
         resourcePostSchema: ToolResourcePostRequest
         resourceGetSchema: ToolResourceGetResponse
   /{toolpk}/:
@@ -954,7 +1004,7 @@ resourceTypes:
   /:
     type:
       CollectionResource:
-        resourceCollectionGetSchema: ResourceCollectionGetResponse
+        resourceCollectionGetSchema: AttachedSensorResourceCollectionGetResponse
         resourcePostSchema: AttachedSensorResourcePostRequest
         resourceGetSchema: AttachedSensorResourceGetResponse
   /{attachedsensorpk}/:
