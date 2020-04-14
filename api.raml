@@ -331,10 +331,6 @@ resourceTypes:
           body:
             application/json:
               type: <<resourceGetSchema>>
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
 
   ItemResource:
     is: [basicAuth]
@@ -354,6 +350,11 @@ resourceTypes:
           body:
             application/json:
               type: <<resourceGetSchema>>
+    delete:
+      is: [csrfToken]
+      responses:
+        204:
+    # Do not remove colon. Will cause parsing error!
 
   ReadModifyOnlyItemResource:
     is: [basicAuth]
@@ -906,7 +907,6 @@ resourceTypes:
         resourceGetSchema: InstObjectToolResourceGetResponse
         resourcePutSchema: InstObjectToolResourcePutRequest
 
-# DO NOT put a '/' after endpoint 
 /api/v1/object/{objectpk}:
   /:
     type:
@@ -979,7 +979,6 @@ resourceTypes:
         resourceGetSchema: GraspsetResourceGetResponse
         resourcePutSchema: GraspsetResourcePutRequest
     
-# DO NOT put a '/' after endpoint 
 /api/v1/robot/{robotpk}:
   /:
     type:
