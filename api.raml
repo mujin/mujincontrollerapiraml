@@ -1,9 +1,10 @@
 #%RAML 1.0
+
 title: MUJIN Controller API
-version: v1
 baseUri: http://{controller}
 baseUriParameters:
   controller: string
+version: v1
 
 traits:
   basicAuth:
@@ -42,6 +43,337 @@ types:
       downloadUri: string
       datemodified: string
       size: integer
+
+  # IMPORTANT:
+  # ExampleResource*Base schema (type) is used for ExampleResource*Request and ExamplesResource*Response type inheritance.
+  # ExampleResource*GetResponse schema (type) is used for typing and content validation for specific resources.
+  # ExampleResource*PostRequest schema (type) is (ONLY) used for POST documentation.
+  # ExampleResource*PutRequest schema (type) is (ONLY) used for PUT documentation.
+  # Make attributes required = false by default (in base resource) due to filtering
+
+  # JSON schema version must be http://json-schema.org/draft-03/schema
+
+  # Some *unusual* behavior (bugs?) of RAML (as of April 1, 2019):
+  # 1.  If inheriting from multiple types, if the first inherited type (first in inheritance list, i.e. at index 0) has a required property set to True and the second
+  #     inherited type (second in inheritance list, i.e. at index 1) has the same property but set to False, validation works, and the property will be required.
+  #     However, if the inheritance order is switched, will cause validation error due to definition conflict (because same property has different requirements).
+  #     
+  #     Therefore, to work around the problem, if defining new type inheriting from multiple types and parent types have same property but different 'require' 
+  #     definitions, set parent type with required property(ies) as first inherited type.
+  #
+  #     Additional note(s):
+  #     1. Current parser implementation gives higher priority to first inherited type. If second inherited type shares the same property as first inherited type,
+  #        first inherited property characteritics will be given precedence
+  #
+
+  BaseItemResource:
+    type: object
+    # additionalProperties: false # Uncomment this when fully defined. Otherwise, will cause schema validation errors.
+    properties:
+      name:
+        type: string
+        required: false
+    # Expand this section for all common attributes shared by all resources and all GET, POST, and PUT methods
+  BaseItemResourceGetResponse:
+    type: BaseItemResource
+    properties:
+      pk:
+        type: string
+        required: false
+    # Expand this section for all (non-mutable) attributes shared by all resources for GET methods
+  BaseItemResourcePostRequest:
+    type: BaseItemResource
+    properties:
+      name:
+        required: true
+      reference_pk:
+        type: string
+        required: false
+    # Expand this section for all attributes shared by all resources for POST methods
+  BaseItemResourcePutRequest:
+    type: BaseItemResource
+    # This section is for all attributes shared by all resources for PUT methods
+
+# For type-checking and content validation for list of resources.
+  ResourceCollectionGetResponse:
+    type: object
+    # additionalProperties: false # Uncomment this after robot/{robotpk}/attachedsensor and /robot/{robotpk}/tool have correct return...
+    additionalProperties: true
+    properties:
+      objects: 
+        type: array
+        required: false # true # See above comment
+      meta:
+        type: object
+        required: false # true # See above comment
+  
+  SceneResourceBase:
+    type: BaseItemResource
+    properties:
+      author:
+        type: string
+        required: false
+      keywords:
+        type: string
+        enum: ['', 'part,incomplete', test]
+        required: false
+  SceneResourceGetResponse:
+    type: [BaseItemResourceGetResponse, SceneResourceBase]
+    # In the future, can expand this section for non-mutable attributes
+  SceneResourcePostRequest:
+    type: [BaseItemResourcePostRequest, SceneResourceBase]
+    properties:
+      author:
+        default: "''"
+        required: false
+      keywords:
+        default: "''"
+        required: false
+    # In the future, can expand this section for POST-specific, scene-specific attributes
+  SceneResourcePutRequest:
+    type: [BaseItemResourcePutRequest, SceneResourceBase]
+  SceneResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: SceneResourceGetResponse[]
+
+  ObjectResourceBase:
+    type: BaseItemResource
+  ObjectResourceGetResponse:
+    type: [BaseItemResourceGetResponse, ObjectResourceBase]
+  ObjectResourcePutRequest:
+    type: [BaseItemResourcePutRequest, ObjectResourceBase]
+
+  LinkResourceBase:
+    type: BaseItemResource
+    properties:
+      parentlinkpk:
+        type: string
+        required: false
+  LinkResourceGetResponse:
+    type: [BaseItemResourceGetResponse, LinkResourceBase]
+  LinkResourcePostRequest:
+    type: [BaseItemResourcePostRequest, LinkResourceBase]
+    properties:
+      parentlinkpk:
+        required: true
+  LinkResourcePutRequest:
+    type: [BaseItemResourcePutRequest, LinkResourceBase]
+  LinkResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: LinkResourceGetResponse[]
+
+  AttachmentResourceBase:
+    type: BaseItemResource
+  AttachmentResourceGetResponse:
+    type: [BaseItemResourceGetResponse, AttachmentResourceBase]
+  AttachmentResourcePostRequest:
+    type: [BaseItemResourcePostRequest, AttachmentResourceBase]
+  AttachmentResourcePutRequest:
+    type: [BaseItemResourcePutRequest, AttachmentResourceBase]
+  AttachmentResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: AttachmentResourceGetResponse[]
+
+  GeometryResourceBase:
+    type: BaseItemResource
+    properties:
+      linkpk:
+        type: string
+        required: false
+      geomtype:
+        type: string
+        enum: [box, sphere]
+        required: false
+      diffusecolor:
+        type: array
+        example: [1, 1, 0, 1]
+        required: false
+  GeometryResourceGetResponse:
+    type: [BaseItemResourceGetResponse, GeometryResourceBase]
+  GeometryResourcePostRequest:
+    type: [BaseItemResourcePostRequest, GeometryResourceBase]
+    properties:
+      linkpk:
+        required: false # Not sure if this should be true...
+      geomtype:
+        required: false # Not sure if this should be true...
+  GeometryResourcePutRequest:
+    type: [BaseItemResourcePutRequest, GeometryResourceBase]
+  GeometryResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: GeometryResourceGetResponse[]
+
+  IkParamResourceBase:
+    type: BaseItemResource
+  IkParamResourceGetResponse:
+    type: [BaseItemResourceGetResponse, IkParamResourceBase]
+  IkParamResourcePostRequest:
+    type: [BaseItemResourcePostRequest, IkParamResourceBase]
+  IkParamResourcePutRequest:
+    type: [BaseItemResourcePutRequest, IkParamResourceBase]
+  IkParamResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: IkParamResourceGetResponse[]
+
+  GraspsetResourceBase:
+    type: BaseItemResource
+    properties:
+      ikparampks:
+        type: array
+        required: false
+  GraspsetResourceGetResponse:
+    type: [BaseItemResourceGetResponse, GraspsetResourceBase]
+  GraspsetResourcePostRequest:
+    type: [BaseItemResourcePostRequest, GraspsetResourceBase]
+  GraspsetResourcePutRequest:
+    type: [BaseItemResourcePutRequest, GraspsetResourceBase]
+  GraspsetResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: GraspsetResourceGetResponse[]
+  
+  RobotResourceBase:
+    type: ObjectResourceBase      
+  RobotResourceGetResponse:
+    type: [BaseItemResourceGetResponse, RobotResourceBase]
+  RobotResourcePutRequest:
+    type: [BaseItemResourcePutRequest, RobotResourceBase]
+
+  ToolResourceBase:
+    type: BaseItemResource
+  ToolResourceGetResponse:
+    type: [BaseItemResourceGetResponse, ToolResourceBase]
+  ToolResourcePostRequest:
+    type: [BaseItemResourcePostRequest, ToolResourceBase]
+  ToolResourcePutRequest:
+    type: [BaseItemResourcePutRequest, ToolResourceBase]
+  ToolResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: ToolResourceGetResponse[]
+
+  AttachedSensorResourceBase:
+    type: BaseItemResource
+  AttachedSensorResourceGetResponse:
+    type: [BaseItemResourceGetResponse, AttachedSensorResourceBase]
+  AttachedSensorResourcePostRequest:
+    type: [BaseItemResourcePostRequest, AttachedSensorResourceBase]
+  AttachedSensorResourcePutRequest:
+    type: [BaseItemResourcePutRequest, AttachedSensorResourceBase]
+  AttachedSensorResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: AttachedSensorResourceGetResponse[]
+
+  InstObjectResourceBase:
+    type: BaseItemResource
+  InstObjectResourceGetResponse:
+    type: [BaseItemResourceGetResponse, InstObjectResourceBase]
+  InstObjectResourcePostRequest:
+    type: [BaseItemResourcePostRequest, InstObjectResourceBase]
+    properties:
+      type:
+        type: string
+        enum: [object, robot]
+        default: object
+        required: false
+  InstObjectResourcePutRequest:
+    type: [BaseItemResourcePutRequest, InstObjectResourceBase]
+  InstObjectResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: InstObjectResourceGetResponse[]
+
+  InstObjectToolResourceBase:
+    type: BaseItemResource
+  InstObjectToolResourceGetResponse:
+    type: [BaseItemResourceGetResponse, InstObjectToolResourceBase]
+  InstObjectToolResourcePostRequest:
+    type: [BaseItemResourcePostRequest, InstObjectToolResourceBase]
+  InstObjectToolResourcePutRequest:
+    type: [BaseItemResourcePutRequest, InstObjectToolResourceBase]
+  InstObjectToolResourceCollectionGetResponse:
+    type: ResourceCollectionGetResponse
+    properties:
+      objects:
+        type: InstObjectToolResourceGetResponse[]
+
+resourceTypes:
+  CollectionResource:
+    is: [basicAuth]
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<resourceCollectionGetSchema>>
+    post:
+      is: [csrfToken]
+      body:
+        application/json:
+          type: <<resourcePostSchema>>
+      responses:
+        201:
+          body:
+            application/json:
+              type: <<resourceGetSchema>>
+
+  ItemResource:
+    is: [basicAuth]
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<resourceGetSchema>>
+    put:
+      is: [csrfToken]
+      body:
+        application/json:
+          type: <<resourcePutSchema>>
+      responses:
+        202:
+          body:
+            application/json:
+              type: <<resourceGetSchema>>
+    delete:
+      is: [csrfToken]
+      responses:
+        204:
+    # Do not remove colon. Will cause parsing error!
+
+  ReadModifyOnlyItemResource:
+    is: [basicAuth]
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<resourceGetSchema>>
+    put:
+      is: [csrfToken]
+      body:
+        application/json:
+          type: <<resourcePutSchema>>
+      responses:
+        202:
+          body:
+            application/json:
+              type: <<resourceGetSchema>>
 
 /systeminfo/:
   is: [basicAuth]
@@ -537,364 +869,145 @@ types:
         204:
 
 /api/v1/scene:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: SceneResourceCollectionGetResponse
+        resourcePostSchema: SceneResourcePostRequest
+        resourceGetSchema: SceneResourceGetResponse
   /{scenepk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      ItemResource:
+        resourceGetSchema: SceneResourceGetResponse
+        resourcePutSchema: SceneResourcePutRequest
 
 /api/v1/scene/{scenepk}/instobject:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: InstObjectResourceCollectionGetResponse
+        resourcePostSchema: InstObjectResourcePostRequest
+        resourceGetSchema: InstObjectResourceGetResponse
   /{instobjectpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      ItemResource:
+        resourceGetSchema: InstObjectResourceGetResponse
+        resourcePutSchema: InstObjectResourcePutRequest
 
 /api/v1/scene/{scenepk}/instobject/{instobjectpk}/tool:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: InstObjectToolResourceCollectionGetResponse
+        resourcePostSchema: InstObjectToolResourcePostRequest
+        resourceGetSchema: InstObjectToolResourceGetResponse
   /{toolpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      ItemResource:
+        resourceGetSchema: InstObjectToolResourceGetResponse
+        resourcePutSchema: InstObjectToolResourcePutRequest
 
-/api/v1/object:
-  is: [basicAuth]
+/api/v1/object/{objectpk}:
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
-  /{objectpk}:
-    /:
-      get:
-      put:
-        is: [csrfToken]
-      delete:
-        is: [csrfToken]
+    type:
+      ReadModifyOnlyItemResource:
+        resourceGetSchema: ObjectResourceGetResponse
+        resourcePutSchema: ObjectResourcePutRequest
 
 /api/v1/object/{objectpk}/link:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: LinkResourceCollectionGetResponse
+        resourcePostSchema: LinkResourcePostRequest
+        resourceGetSchema: LinkResourceGetResponse
   /{linkpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      ItemResource:
+        resourceGetSchema: LinkResourceGetResponse
+        resourcePutSchema: LinkResourcePutRequest
 
 /api/v1/object/{objectpk}/attachment:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: AttachmentResourceCollectionGetResponse
+        resourcePostSchema: AttachmentResourcePostRequest
+        resourceGetSchema: AttachmentResourceGetResponse
   /{attachmentpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      ItemResource:
+        resourceGetSchema: AttachmentResourceGetResponse
+        resourcePutSchema: AttachmentResourcePutRequest
 
 /api/v1/object/{objectpk}/geometry:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: GeometryResourceCollectionGetResponse
+        resourcePostSchema: GeometryResourcePostRequest
+        resourceGetSchema: GeometryResourceGetResponse
   /{geometrypk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
-
+    type:
+      ItemResource:
+        resourceGetSchema: GeometryResourceGetResponse
+        resourcePutSchema: GeometryResourcePutRequest
+    
 /api/v1/object/{objectpk}/ikparam:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type: 
+      CollectionResource:
+        resourceCollectionGetSchema: IkParamResourceCollectionGetResponse
+        resourcePostSchema: IkParamResourcePostRequest
+        resourceGetSchema: IkParamResourceGetResponse
   /{ikparampk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      ItemResource:
+        resourceGetSchema: IkParamResourceGetResponse
+        resourcePutSchema: IkParamResourcePutRequest
 
 /api/v1/object/{objectpk}/graspset:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: GraspsetResourceCollectionGetResponse
+        resourcePostSchema: GraspsetResourcePostRequest
+        resourceGetSchema: GraspsetResourceGetResponse
   /{graspsetpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
-
-/api/v1/robot:
-  is: [basicAuth]
+    type:
+      ItemResource:
+        resourceGetSchema: GraspsetResourceGetResponse
+        resourcePutSchema: GraspsetResourcePutRequest
+    
+/api/v1/robot/{robotpk}:
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
-  /{robotpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
-
+    type:
+      ReadModifyOnlyItemResource:
+        resourceGetSchema: RobotResourceGetResponse
+        resourcePutSchema: RobotResourcePutRequest
+    
 /api/v1/robot/{robotpk}/tool:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: ToolResourceCollectionGetResponse
+        resourcePostSchema: ToolResourcePostRequest
+        resourceGetSchema: ToolResourceGetResponse
   /{toolpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      ItemResource:
+        resourceGetSchema: ToolResourceGetResponse
+        resourcePutSchema: ToolResourcePutRequest
 
 /api/v1/robot/{robotpk}/attachedsensor:
-  is: [basicAuth]
   /:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      is: [csrfToken]
-      responses:
-        201:
-          body:
-            application/json:
+    type:
+      CollectionResource:
+        resourceCollectionGetSchema: AttachedSensorResourceCollectionGetResponse
+        resourcePostSchema: AttachedSensorResourcePostRequest
+        resourceGetSchema: AttachedSensorResourceGetResponse
   /{attachedsensorpk}/:
-    get:
-      responses:
-        200:
-          body:
-            application/json:
-    put:
-      is: [csrfToken]
-      responses:
-        202:
-          body:
-            application/json:
-    delete:
-      is: [csrfToken]
-      responses:
-        204:
+    type:
+      ItemResource:
+        resourceGetSchema: AttachedSensorResourceGetResponse
+        resourcePutSchema: AttachedSensorResourcePutRequest
